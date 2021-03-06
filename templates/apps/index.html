@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'fa/css/all.min.css' %}">
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <title>Django + Bootstrap</title>
+    <title>Sherpa Index Page</title>
 </head>
 
 <body>
@@ -42,12 +42,14 @@
     <div class="container">
         <div class="jumbotron">
             <h1 class="display-4">Hello, world! <i class="fas fa-globe-americas"></i></h1>
-            <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention
-                to
-                featured content or information.</p>
+            <p class="lead">Index Page for Sherpa, your unsung guide to help you succeed with the Search Summit!</p>
             <hr class="my-4">
-            <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-            <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+            <p>
+                Sherpa takes care of some of the dynamic aspects for the Search Summit 2021 Sharepoint site.
+                This page is meant for Summit organizers only, mainly as a convenient source of links to 
+                use in the Sharepoint site and Confluence pages.
+            </p>
+            <a class="btn btn-primary btn-lg" href="https://github.com/sujitpal/sherpa" role="button">Learn more</a>
         </div>
     </div>
 
@@ -56,17 +58,21 @@
             <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Special title treatment</h5>
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                        <h5 class="card-title">Login Required</h5>
+                        <p class="card-text">Following pages need the user to be logged in. Will automatically redirect to login page if not logged in,
+                            and for all but the Admin page, will provide a view customized / restricted to the logged-in user.</p>
+                        <!--<a href="#" class="btn btn-primary">Go somewhere</a>-->
+                        <ul>
+                            <li><a href="/admin">Admin Page</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Special title treatment</h5>
-                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                        <h5 class="card-title">No Login Required</h5>
+                        <p class="card-text">These pages don't require login and can be linked to directly using their URLs.</p>
                         <a href="#" class="btn btn-primary">Go somewhere</a>
                     </div>
                 </div>
