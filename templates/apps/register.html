@@ -1,0 +1,20 @@
+{% block title %}Create an Account{% endblock %}
+
+{% block content %}
+    <form method="POST" class="form-group">
+        {% csrf_token %}
+        {% for field in register_form %}
+            <p>
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small style='color:gray;'>{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <small style='color:red;'>{{ field.help_text }}</small>
+                {% endfor %}
+            </p>
+        {% endfor %}
+        <button type="submit" class="btn btn-success">Register</button>
+    </form>
+{% endblock %} 
