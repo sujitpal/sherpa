@@ -20,6 +20,7 @@ class Attendee(models.Model):
     # gets filled on initial signup
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=128, blank=True)
+    email = models.EmailField(max_length=128, blank=True)
     org = models.PositiveSmallIntegerField(choices=ORGS, default=0)
     timezone = models.PositiveSmallIntegerField(choices=TIMEZONES, default=12)
     # gets filled only when paper accepted
