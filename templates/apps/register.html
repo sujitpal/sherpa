@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="container">
-    <h4 class="mb-3">Sign Up</h4>
+    <h4>Sign Up</h4>
     <form method="POST" class="form-group">
         {% csrf_token %}
         {% for field in register_form %}
