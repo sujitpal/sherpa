@@ -123,6 +123,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [str(BASE_DIR / 'static')]
 
 # File uploads (https://simpleisbetterthancomplex.com/tutorial/2016/08/01/how-to-upload-files-with-django.html)
-MEDIA_URL = "/media/"
+MEDIA_URL = '/media/'
 MEDIA_ROOT = str(BASE_DIR / 'media')
 
+# Email backend
+# https://simpleisbetterthancomplex.com/tutorial/2016/06/13/how-to-send-email.html
+# First used for password reset (https://simpleisbetterthancomplex.com/tutorial/2016/09/19/how-to-create-password-reset-view.html)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

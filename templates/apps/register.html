@@ -2,13 +2,9 @@
 
 {% block title %}Sign Up{% endblock %}
 
-{% block navigation %}
-<a class="navbar-brand" href="https://reedelsevier.sharepoint.com/sites/SearchSummit">Search Summit 2021</a>
-{% endblock %}
-
 {% block content %}
 <div class="container">
-    <h4>Sign Up</h4>
+    <h3>Sign Up</h3>
     <form method="POST" class="form-group">
         {% csrf_token %}
         {% for field in register_form %}
@@ -23,7 +19,7 @@
                 {% endfor %}
             </p>
         {% endfor %}
-        <button type="submit" class="btn btn-success">Register</button>
+        <button type="submit" class="btn btn-success">Sign Up!</button>
     </form>
 </div>
 {% endblock %} 
