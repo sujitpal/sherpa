@@ -1,7 +1,10 @@
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.template.defaulttags import register
 
 from .forms import RegisterForm
+from .models import Attendee
 
 # Create your views here.
 
@@ -33,3 +36,21 @@ def registerPage(request):
         form = RegisterForm()
         context["register_form"] = form
     return render(request, 'apps/register.html', context)
+
+
+def attendeeListPage(request):
+    attendee_list = Attendee.objects.exclude(name__exact='').order_by('user__id')
+    num_attendees = attendee_list.count()
+    page = request.GET.get('page', 1)
+    paginator = Paginator(attendee_list, 10)
+    try:
+        attendees = paginator.page(page)
+    except PageNotAnInteger:
+        attendees = paginator.page(1)
+    except EmptyPage:
+        attendees = paginator.page(paginator.num_pages)
+    context = { 
+        "attendees" : attendees,
+        "num_attendees": num_attendees
+    }
+    return render(request, "apps/attendees.html", context)

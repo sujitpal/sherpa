@@ -9,20 +9,20 @@ from datetime import datetime
 
 class Attendee(models.Model):
     ORGS = [
-        (0, 'LexisNexis'),
-        (1, 'Elsevier'),
-        (2, 'Exhibitions'),
-        (3, 'RELX'),
-        (4, 'External')
+        ("LexisNexis", 'LexisNexis'),
+        ("Elsevier", 'Elsevier'),
+        ("Exhibitions", 'Exhibitions'),
+        ("RELX", 'RELX'),
+        ("External", 'External')
     ]
-    TIMEZONES = [(i + 12, 'UTC{:+d}'.format(i)) for i in range(-12, 12, 1)]
+    TIMEZONES = [('UTC{:+d}'.format(i), 'UTC{:+d}'.format(i)) for i in range(-12, 12, 1)]
 
     # gets filled on initial signup
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=128, blank=True)
     email = models.EmailField(max_length=128, blank=True)
-    org = models.PositiveSmallIntegerField(choices=ORGS, default=0)
-    timezone = models.PositiveSmallIntegerField(choices=TIMEZONES, default=12)
+    org = models.CharField(max_length=32, choices=ORGS, default=0)
+    timezone = models.CharField(max_length=32, choices=TIMEZONES, default=12)
     # gets filled only when paper accepted
     speaker_bio = models.TextField(blank=True)
     speaker_avatar = models.FileField(upload_to='avatars', blank=True)
@@ -37,7 +37,7 @@ class Attendee(models.Model):
         if self.name == '':
             return '{:s} (signup pending)'.format(self.user.username)
         else:
-            return '{:s} ({:s})'.format(self.name, self.ORGS[self.org][1])
+            return '{:s} ({:s})'.format(self.name, self.org)
 
 
 @receiver(post_save, sender=User)

@@ -1,0 +1,51 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}Attendees List{% endblock %}
+
+{% block content %}
+<h3>List of Attendees ({{ num_attendees }})</h3>
+
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Organization</th>
+        <th>Timezone</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for attendee in attendees %}
+        <tr>
+            <td>{{ attendee.name }}</td>
+            <td>{{ attendee.email }}</td>
+            <td>{{ attendee.org }}</td>
+            <td>{{ attendee.timezone }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  
+  {% if attendees.has_other_pages %}
+    <ul class="pagination">
+      {% if attendees.has_previous %}
+        <li><a href="?page={{ attendees.previous_page_number }}">&laquo;</a></li>
+      {% else %}
+        <li class="disabled"><span>&laquo;</span></li>
+      {% endif %}
+      {% for i in attendees.paginator.page_range %}
+        {% if attendees.number == i %}
+          <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li><a href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if attendees.has_next %}
+        <li><a href="?page={{ attendees.next_page_number }}">&raquo;</a></li>
+      {% else %}
+        <li class="disabled"><span>&raquo;</span></li>
+      {% endif %}
+    </ul>
+  {% endif %}
+  
+{% endblock %}
