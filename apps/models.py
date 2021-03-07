@@ -53,14 +53,14 @@ def save_user_attendee(sender, instance, **kwargs):
 
 class Paper(models.Model):
     PAPER_TYPES = [
-        (0, 'Long Form'),
-        (1, 'Short Form'),
-        (3, 'Workshop'),
-        (4, 'Poster')
+        ('Long Form', 'Long Form'),
+        ('Short Form', 'Short Form'),
+        ('Workshop', 'Workshop'),
+        ('Poster', 'Poster')
     ]
 
     # entered by author during submission
-    paper_type = models.PositiveSmallIntegerField(choices=PAPER_TYPES, default=0)
+    paper_type = models.CharField(max_length=16, choices=PAPER_TYPES, default=0)
     title = models.CharField(max_length=128, blank=False)
     abstract = models.TextField(blank=False)
     keywords = models.CharField(max_length=128, blank=False)
@@ -83,18 +83,18 @@ class Paper(models.Model):
 
 class Review(models.Model):
     SCORES = [
-        (0, "Unscored"),
-        (1, 'Strong Accept'),
-        (2, 'Accept'),
-        (3, 'Maybe Accept'),
-        (4, 'Reject'),
+        ('--', "--"),
+        ('Strong Accept', 'Strong Accept'),
+        ('Accept', 'Accept'),
+        ('Maybe Accept', 'Maybe Accept'),
+        ('Reject', 'Reject'),
     ]
 
     reviewer = models.ForeignKey(
         'apps.Attendee', related_name='reviewer_name', on_delete=models.CASCADE)
     paper = models.ForeignKey(
         'apps.Paper', related_name='paper', on_delete=models.CASCADE)
-    score = models.PositiveSmallIntegerField(choices=SCORES, default=0)
+    score = models.CharField(max_length=16, choices=SCORES, default=0)
     comments = models.TextField(blank=True)
 
     def __str__(self):
