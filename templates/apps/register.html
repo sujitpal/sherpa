@@ -1,6 +1,14 @@
-{% block title %}Create an Account{% endblock %}
+{% extends 'apps/base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block navigation %}
+<a class="navbar-brand" href="https://reedelsevier.sharepoint.com/sites/SearchSummit">Search Summit 2021</a>
+{% endblock %}
 
 {% block content %}
+<div class="container">
+    <h4 class="mb-3">Sign Up</h4>
     <form method="POST" class="form-group">
         {% csrf_token %}
         {% for field in register_form %}
@@ -17,4 +25,5 @@
         {% endfor %}
         <button type="submit" class="btn btn-success">Register</button>
     </form>
+</div>
 {% endblock %} 
