@@ -1,0 +1,55 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}Papers List{% endblock %}
+
+{% block content %}
+<h3>Submitted Papers (total {{ num_papers }})</h3>
+
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Submitted</th>
+        <th>Paper Type</th>
+        <th>Primary Author</th>
+        <th>Title/Abstract/Keywords</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for paper in papers %}
+        <tr>
+            <td>{{ paper.submitted_at|date:'Y-m-d' }}</td>
+            <td>{{ paper.paper_type }}</td>
+            <td>{{ paper.primary_author }}</td>
+            <td>
+                <b>{{ paper.title }}</b>
+                <p>{{ paper.abstract }}</p>
+                <p><b>Keywords:</b>{{ paper.keywords }}</p>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  
+  {% if papers.has_other_pages %}
+    <ul class="pagination">
+      {% if papers.has_previous %}
+        <li><a href="?page={{ papers.previous_page_number }}">&laquo;</a></li>
+      {% else %}
+        <li class="disabled"><span>&laquo;</span></li>
+      {% endif %}
+      {% for i in papers.paginator.page_range %}
+        {% if papers.number == i %}
+          <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li><a href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if attendees.has_next %}
+        <li><a href="?page={{ papers.next_page_number }}">&raquo;</a></li>
+      {% else %}
+        <li class="disabled"><span>&raquo;</span></li>
+      {% endif %}
+    </ul>
+  {% endif %}
+  
+{% endblock %}

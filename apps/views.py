@@ -9,7 +9,14 @@ from .models import Attendee, Paper
 # Create your views here.
 
 def indexPage(request):
+    # This page should never be visible, replace all redirect('index')
+    # calls to redirect('user_portal') defined below
     return render(request, 'apps/index.html', {})
+
+
+def userPortalPage(request):
+    context = {}
+    return render(request, 'apps/index.html', context)
 
 
 def registerPage(request):
@@ -60,13 +67,16 @@ def paperCreatePage(request):
     if not request.user.is_authenticated:
         return redirect('index')
     context = {}
-    form = PaperForm(request.POST or None)
-    # form.primary_author = request.user.attendee.name
-    form.primary_author = 'Sujit Pal'
-    if form.is_valid():
-        form.save()
-    context["paper_form"] = form
-    return render(request, "apps/paper_create.html", context)
+    if request.POST:
+        form = PaperForm(request.POST)
+        form.primary_author = request.user.attendee
+        if form.is_valid():
+            form.save()
+        return redirect('index')
+    else:
+        form = PaperForm()
+        context["paper_form"] = form
+        return render(request, "apps/paper_create.html", context)
 
 
 def paperRetrievePage(request):
@@ -82,6 +92,22 @@ def paperDeletePage(request):
     return render(request, 'apps/paper_delete.html', context)
 
 def paperListPage(request):
-    context = {}
+    paper_list = Paper.objects.all()
+    num_papers = paper_list.count()
+    page = request.GET.get('page', 1)
+    paginator = Paginator(paper_list, 10)
+    try:
+        papers = paginator.page(page)
+    except PageNotAnInteger:
+        papers = paginator.page(1)
+    except EmptyPage:
+        papers = paginator.page(paginator.num_pages)
+    context = { 
+        "papers" : papers,
+        "num_papers": num_papers
+    }
     return render(request, 'apps/papers.html', context)
+
+
+
 
