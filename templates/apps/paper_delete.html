@@ -1,0 +1,15 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}Delete Paper{% endblock %}
+
+{% block content %}
+<h3>Delete Paper</h3>
+
+<form method="POST" enctype="multipart/form-data"> 
+    {% csrf_token %} 
+    Are you want to delete this item ? 
+    <button type="submit" class="btn btn-success">Delete!</button> 
+    <a href="/">Cancel </a> 
+</form> 
+
+{% endblock %}

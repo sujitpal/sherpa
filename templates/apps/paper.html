@@ -1,0 +1,13 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}Paper Details{% endblock %}
+
+{% block content %}
+<h3>Paper Details</h3>
+{% for field in paper_form %}
+<p>
+    {{ field.label_tag }}
+    {{ field }}
+</p>
+{% endfor %}
+{% endblock %}

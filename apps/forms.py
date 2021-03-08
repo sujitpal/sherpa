@@ -24,8 +24,6 @@ class PaperForm(forms.ModelForm):
         required=True, 
         help_text='Enter abstrct (suggested max 500 words) for presentation')
     keywords = forms.CharField(max_length=128, help_text='Enter keywords for presentation')
-    # author_choices = tuple([(str(a), str(a)) 
-    #     for a in Attendee.objects.exclude(name__exact='')])
     author_choices = Attendee.objects.exclude(name__exact='')
     primary_author = forms.ModelChoiceField(
         queryset=author_choices,

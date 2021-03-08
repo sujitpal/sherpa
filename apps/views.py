@@ -1,6 +1,7 @@
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.forms.models import model_to_dict
+from django.shortcuts import get_object_or_404, render, redirect
 from django.template.defaulttags import register
 
 from .forms import RegisterForm, PaperForm
@@ -79,17 +80,39 @@ def paperCreatePage(request):
         return render(request, "apps/paper_create.html", context)
 
 
-def paperRetrievePage(request):
-    context = {}
+def paperRetrievePage(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('index')
+    paper = get_object_or_404(Paper, pk=pk)
+    form = PaperForm(data=model_to_dict(paper))
+    context = { "paper_form": form }
     return render(request, 'apps/paper.html', context)
 
-def paperUpdatePage(request):
+
+def paperUpdatePage(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('index')
     context = {}
+    paper = get_object_or_404(Paper, pk=pk)
+    if request.POST:
+        form = PaperForm(request.POST, instance=paper)
+        if form.is_valid():
+            form.save()
+        return redirect('index')
+    else:
+        form = PaperForm(data=model_to_dict(paper))
+        context["paper_form"] = form
     return render(request, 'apps/paper_update.html', context)
 
-def paperDeletePage(request):
+
+def paperDeletePage(request, pk):
     context = {}
+    paper = get_object_or_404(Paper, pk=pk)
+    if request.POST:
+        paper.delete()
+        return redirect('index')
     return render(request, 'apps/paper_delete.html', context)
+
 
 def paperListPage(request):
     paper_list = Paper.objects.all()

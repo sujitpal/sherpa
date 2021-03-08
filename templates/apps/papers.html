@@ -12,6 +12,7 @@
         <th>Paper Type</th>
         <th>Primary Author</th>
         <th>Title/Abstract/Keywords</th>
+        <th>Delete?</th>
       </tr>
     </thead>
     <tbody>
@@ -21,10 +22,11 @@
             <td>{{ paper.paper_type }}</td>
             <td>{{ paper.primary_author }}</td>
             <td>
-                <b>{{ paper.title }}</b>
+                <b><a href="/paper/{{ paper.id }}/update">{{ paper.title }}</a></b>
                 <p>{{ paper.abstract }}</p>
                 <p><b>Keywords:</b>{{ paper.keywords }}</p>
             </td>
+            <td><a href="/paper/{{ paper.id }}/delete"><span style="color:red;"><i class="fa fa-trash" aria-hidden="true"></i></span></a></td>
         </tr>
     {% endfor %}
     </tbody>
