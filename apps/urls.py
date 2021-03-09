@@ -1,10 +1,10 @@
-# from django.contrib import admin
-# from django.urls import include, path
 from django.urls import path
 
 from .views import (
     indexPage, 
-    registerPage,
+    signUpPage,
+    signInPage,
+    signOutPage,
     attendeeListPage,
     paperCreatePage,
     paperRetrievePage,
@@ -15,7 +15,9 @@ from .views import (
 
 urlpatterns = [
     path('', indexPage, name='index'),
-    path('register/', registerPage, name='register'),
+    path('signup/', signUpPage, name='sign_up'),
+    path('signin/', signInPage, name='sign_in'),
+    path('signout/', signOutPage, name='sign_out'),
     path('attendees/', attendeeListPage, name='attendee_list'),
     path('paper/new', paperCreatePage, name='paper_create'),
     path('paper/<int:pk>', paperRetrievePage, name='paper_retrieve'),

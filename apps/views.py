@@ -20,7 +20,7 @@ def userPortalPage(request):
     return render(request, 'apps/index.html', context)
 
 
-def registerPage(request):
+def signUpPage(request):
     context = {}
     if request.POST:
         form = RegisterForm(request.POST)
@@ -39,11 +39,19 @@ def registerPage(request):
             login(request, user)
             return redirect('index')
         else:
-            context["register_form"] = form
+            context["signup_form"] = form
     else:
         form = RegisterForm()
-        context["register_form"] = form
-    return render(request, 'apps/register.html', context)
+        context["signup_form"] = form
+    return render(request, 'apps/signup.html', context)
+
+
+def signInPage(request):
+    pass
+
+
+def signOutPage(request):
+    pass
 
 
 def attendeeListPage(request):
