@@ -1,4 +1,5 @@
-from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404, render, redirect
@@ -47,11 +48,23 @@ def signUpPage(request):
 
 
 def signInPage(request):
-    pass
+    if request.user.is_authenticated:
+        return redirect('index')
+    if request.POST:
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('index')
+        else:
+            messages.error(request, 'Error: Wrong Username and/or Password!')
+    return render(request, 'apps/signin.html')
 
 
 def signOutPage(request):
-    pass
+    logout(request)
+    return redirect('index')
 
 
 def attendeeListPage(request):

@@ -1,0 +1,30 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h3>Sign In</h3>
+    <form method="POST" class="form-group">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td><label for="id_username">Enter username</label></td>
+                <td><input type="text" id="id_username" name="username"></td>
+            </tr>
+            <tr>
+                <td><label for="id_username">Enter password</label></td>
+                <td><input type="password" id="id_password" name="password"></td>
+            </tr>
+        </table>        
+        <button type="submit" class="btn btn-success">Sign Up!</button>
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li><span style='color:red;'>{{ message }}</span></li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    </form>
+</div>
+{% endblock %} 

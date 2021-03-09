@@ -7,7 +7,7 @@
     <h3>Sign Up</h3>
     <form method="POST" class="form-group">
         {% csrf_token %}
-        {% for field in register_form %}
+        {% for field in signup_form %}
             <p>
                 {{ field.label_tag }}
                 {{ field }}
