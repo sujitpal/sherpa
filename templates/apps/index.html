@@ -28,8 +28,11 @@ Sherpa Index Page
                     <p class="card-text">Following pages need the user to be logged in. Will automatically redirect to login page if not logged in,
                         and for all but the Admin page, will provide a view customized / restricted to the logged-in user.</p>
                     <ul>
-                        <li><a href="/admin">Admin</a></li>
-                        <li><a href="/paper/new">Add a Paper</a></li>
+                        <li><a href="/admin">Admin</a> -- admin only</li>
+                        <li><a href="/paper/new">Add a Paper</a> -- user, organizer</li>
+                        <li><a href="/paper/1/update">Update Paper</a> -- user, organizer</li>
+                        <li><a href="/paper/1/delete">Delete Paper</a> -- user, organizer</li>
+                        <li><a href="/papers">All Papers (includes update/delete)</a> -- organizer</li>
                     </ul>
                 </div>
             </div>
@@ -41,12 +44,13 @@ Sherpa Index Page
                     <p class="card-text">These pages don't require login and can be linked to directly using their URLs.</p>
                     <ul>
                         <li><a href="/signup">Sign Up</a></li>
+                        <li><a href="/signin">Sign In</a></li>
                         <li><a href="/password_reset">Forgot Password</a></li>
+                        <li><a href="/signout">Sign Out</a></li>
                     </ul>
                     <hr/>
                     <ul>
                         <li><a href="/attendees">Attendees List</a></li>
-                        <li><a href="/papers">All Papers (remove later)</a></li>
                     </ul>
                 </div>
             </div>
