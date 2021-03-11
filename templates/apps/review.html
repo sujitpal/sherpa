@@ -1,0 +1,19 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}Review Details{% endblock %}
+
+{% block content %}
+<h3>Review Details</h3>
+<table>
+    <tr>
+        <td><b>Reviewer:</b></td>
+        <td>{{ reviewer }}</td>
+    </tr>
+{% for field in review_form %}
+    <tr>
+        <td><b>{{ field.label_tag }}</b></td>
+        <td>{{ field }}</td>
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}

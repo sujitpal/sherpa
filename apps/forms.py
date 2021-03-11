@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Attendee, Paper
+from .models import Attendee, Paper, Review
 
 class RegisterForm(UserCreationForm):
     name = forms.CharField(max_length=128, required=True, help_text='Enter your name')
@@ -41,4 +41,20 @@ class PaperForm(forms.ModelForm):
         fields = [
             "paper_type", "title", "abstract", "keywords", 
             "primary_author", "co_authors"
+        ]
+
+
+class ReviewForm(forms.ModelForm):
+    paper_choices = Paper.objects.all()
+    paper = forms.ModelChoiceField(queryset=paper_choices,
+        required=True, help_text='Choose Paper')
+    score = forms.ChoiceField(choices=Review.SCORES, 
+        required=True, help_text='Enter review score')
+    comments = forms.CharField(widget=forms.Textarea, 
+        required=False, help_text='Enter review comments (optional)')
+
+    class Meta:
+        model = Review
+        fields = [
+            'paper', 'score', 'comments'
         ]

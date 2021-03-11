@@ -1,3 +1,4 @@
+from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
@@ -5,8 +6,8 @@ from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template.defaulttags import register
 
-from .forms import RegisterForm, PaperForm
-from .models import Attendee, Paper
+from .forms import RegisterForm, PaperForm, ReviewForm
+from .models import Attendee, Paper, Review
 
 # Create your views here.
 
@@ -153,5 +154,59 @@ def paperListPage(request):
     return render(request, 'apps/papers.html', context)
 
 
+def reviewCreatePage(request):
+    if not request.user.is_authenticated:
+        return redirect('index')
+    reviewer = request.user.attendee
+    if not reviewer.is_reviewer:
+        raise PermissionDenied
+    if request.POST:
+        form = ReviewForm(request.POST)
+        form.reviewer = reviewer
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.reviewer = reviewer
+            review.save()
+        return redirect('index')
+    else:
+        form = ReviewForm()
+        context = {
+            "review_form": form,
+            "reviewer": str(reviewer)
+        }
+        return render(request, "apps/review_create.html", context)
 
 
+def reviewRetrievePage(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('index')
+    reviewer = request.user.attendee
+    if not reviewer.is_reviewer:
+        raise PermissionDenied
+    review = get_object_or_404(Review, pk=pk)
+    form = ReviewForm(data=model_to_dict(review))
+    context = { 
+        "review_form": form,
+        "reviewer": str(reviewer)
+    }
+    return render(request, 'apps/review.html', context)
+
+
+def reviewUpdatePage(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('index')
+    reviewer = request.user.attendee
+    if not reviewer.is_reviewer:
+        raise PermissionDenied
+    context = {}
+    review = get_object_or_404(Review, pk=pk)
+    if request.POST:
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+        return redirect('index')
+    else:
+        form = ReviewForm(data=model_to_dict(review))
+        context["review_form"] = form
+    return render(request, 'apps/review_update.html', context)
+    
