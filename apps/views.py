@@ -1,6 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404, render, redirect
@@ -33,7 +34,7 @@ def signUpPage(request):
             user.attendee.timezone = form.cleaned_data.get('timezone')
             user.username = user.attendee.email
             user.save()
-            username = form.cleaned_data.get('username')
+            username = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
             login(request, user)

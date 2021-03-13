@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -14,6 +15,12 @@ class RegisterForm(UserCreationForm):
         fields = [
             'name', 'email', 'org', 'timezone',
         ]
+    
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        user = User.objects.filter(username__exact=email)
+        if user:
+            raise ValidationError('Account with this email already exists, please Login using the link below. If you have forgotten your password, click Forgot Password.')
 
 
 class PaperForm(forms.ModelForm):

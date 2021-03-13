@@ -7,19 +7,25 @@
     <h3>Sign Up</h3>
     <form method="POST" class="form-group">
         {% csrf_token %}
+        <table>
         {% for field in signup_form %}
-            <p>
-                {{ field.label_tag }}
-                {{ field }}
+            <tr valign="top">
+                <td><b>{{ field.label_tag }}</b></td>
+                <td>{{ field }}</td>
+                <td>
                 {% if field.help_text %}
                     <small style='color:gray;'>{{ field.help_text }}</small>
                 {% endif %}
                 {% for error in field.errors %}
-                    <small style='color:red;'>{{ field.help_text }}</small>
+                    <small style='color:red;'>{{ error }}</small>
                 {% endfor %}
-            </p>
+                </td>
+            </tr>
         {% endfor %}
+        </table>
         <button type="submit" class="btn btn-success">Sign Up!</button>
+        &nbsp;&nbsp;<a href='/signin'>Login</a>
+        &nbsp;&nbsp;<a href='/password_reset'>Forgot Password</a>
     </form>
 </div>
 {% endblock %} 
