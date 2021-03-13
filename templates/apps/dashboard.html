@@ -6,9 +6,12 @@ Dashboard for {{ logged_in_user }}
 
 {% block content %}
 <div class="container">
+    <h1>Dashboard for {{ logged_in_user }}</h1>
+    <hr/>
     <h3>Profile</h3>
     <ul>
         <li><a href="paper/{{ logged_in_user.id }}/update/">Update profile</a></li>
+        <li><a href="paper/create/">Submit a paper</a></li>
         {% if has_accepted_papers %}
         <li><a href="speaker_bio/{{ logged_in_user.id }}/update/">Update Speaker Bio</a></li>
         {% endif %}
