@@ -20,11 +20,6 @@ def indexPage(request):
     return render(request, 'apps/index.html', context)
 
 
-def userPortalPage(request):
-    context = {}
-    return render(request, 'apps/index.html', context)
-
-
 def signUpPage(request):
     context = {}
     if request.POST:
@@ -84,7 +79,8 @@ def attendeeListPage(request):
         attendees = paginator.page(paginator.num_pages)
     context = { 
         "attendees" : attendees,
-        "num_attendees": num_attendees
+        "num_attendees": num_attendees,
+        "logged_in_user": request.user.attendee
     }
     return render(request, "apps/attendees.html", context)
 
@@ -212,4 +208,36 @@ def reviewUpdatePage(request, pk):
         form = ReviewForm(data=model_to_dict(review))
         context["review_form"] = form
     return render(request, 'apps/review_update.html', context)
-    
+
+
+def dashboardPage(request):
+    if not request.user.is_authenticated:
+        return redirect('index')
+    context = {}
+    logged_in_user = request.user.attendee
+    context['logged_in_user'] = logged_in_user
+    # update profile: /attendee/<logged_in_user.id>/update
+    # TODO: need update attendee view
+    # my papers
+    my_papers = Paper.objects.filter(primary_author__exact=logged_in_user.id)
+    context['my_submitted_papers'] = my_papers
+    # check if user has accepted papers
+    has_accepted_papers = len([paper for paper in my_papers if paper.is_accepted]) > 0
+    context["has_accepted_papers"] = has_accepted_papers
+    # my review tasks
+    if logged_in_user.is_reviewer:
+        my_review_tasks = []
+        all_papers = Paper.objects.all()
+        my_reviews = Review.objects.filter(reviewer__exact=logged_in_user.id)
+        reviewed_papers = set([r.paper.id for r in my_reviews])
+        for paper in all_papers:
+            if paper.id in reviewed_papers:
+                my_review_tasks.append((paper, True))
+            else:
+                my_review_tasks.append((paper, False))
+        context['my_review_tasks'] = my_review_tasks
+    # full list of papers
+    return render(request, 'apps/dashboard.html', context)
+
+
+

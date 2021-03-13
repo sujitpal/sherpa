@@ -1,0 +1,82 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}
+Dashboard for {{ logged_in_user }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h3>Profile</h3>
+    <ul>
+        <li><a href="paper/{{ logged_in_user.id }}/update/">Update profile</a></li>
+        {% if has_accepted_papers %}
+        <li><a href="speaker_bio/{{ logged_in_user.id }}/update/">Update Speaker Bio</a></li>
+        {% endif %}
+    </ul>
+    <h3>Submitted papers</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Paper Type</th>
+                <th>Title / Abstract / Keywords</th>
+                <th>Author(s)</th>
+                <th>Accepted?</th>
+            </tr>
+        </thead>
+        {% for paper in my_submitted_papers %}
+            <tr>
+                <td>{{ paper.paper_type }}</td>
+                <td>
+                    <b><a href="/paper/{{ paper.id }}/update/">{{ paper.title }}</a></b>
+                    <p>{{ paper.abstract }}</p>
+                    <p><b>Keywords: </b>{{ paper.keywords }}</p>
+                </td>
+                <td>
+                    {{ paper.primary_author }}
+                    {% if paper.coauthors %}
+                    , {{ paper.coauthors }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if paper.is_accepted %}
+                    <span style="color: green;"><i class="fas fa-check"></i></span>
+                    {% else %}
+                    <!-- <span style="color: red;"><i class="fas fa-times"></i></span> -->
+                    <span style="color: black;"><i class="fas fa-lock"></i></span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        <tbody>
+    </table>
+    {% if my_review_tasks %}
+        <h3>Papers to Review</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Paper</th>
+                    <th>Reviewed?</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for paper, is_reviewed in my_review_tasks %}
+                <tr>
+                    <td>
+                        <a href="/review/{{ paper.id }}/{{ logged_in_user.id }}/update/">{{ paper.title }} ({{ paper.paper_type }})</a>
+                    </td>
+                    <td>
+                        {% if is_reviewed %}
+                        <span style="color: green;"><i class="fas fa-check"></i></span>
+                        {% else %}
+                        <span style="color: red;"><i class="fas fa-times"></i></span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}    
+            </tbody>
+        </table>
+    {% endif %}
+    <hr/>
+    <a href="/attendees">Back to Attendee List</a>
+</div>
+{% endblock %}
