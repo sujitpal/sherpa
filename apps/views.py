@@ -14,7 +14,10 @@ from .models import Attendee, Paper, Review
 def indexPage(request):
     # This page should never be visible, replace all redirect('index')
     # calls to redirect('user_portal') defined below
-    return render(request, 'apps/index.html', {})
+    context = {}
+    if request.user.is_authenticated:
+        context["logged_in_user"] = request.user.attendee
+    return render(request, 'apps/index.html', context)
 
 
 def userPortalPage(request):
