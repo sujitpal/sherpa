@@ -4,10 +4,29 @@
 
 {% block content %}
 <h3>Paper Details</h3>
-{% for field in paper_form %}
-<p>
-    {{ field.label_tag }}
-    {{ field }}
-</p>
-{% endfor %}
+<table>
+    <tr valign="top">
+        <td><b>Paper-Type:</b></td>
+        <td>{{ paper.paper_type }}</td>
+    </tr>
+    <tr valign="top">
+        <td><b>Title:</b></td>
+        <td>{{ paper.title }}</td>
+    </tr>
+    <tr valign="top">
+        <td><b>Abstract:</b></td>
+        <td>{{ paper.abstract }}</td>
+    </tr>
+    <tr valign="top">
+        <td><b>Keywords:</b></td>
+        <td>{{ paper.keywords }}</td>
+    </tr>
+    <tr valign="top">
+        <td><b>Authors:</b></td>
+        <td>
+            {{ paper_author }}
+            {% if paper_coauthors %}, {{ paper_coauthors }}{% endif %}
+        </td>
+    </tr>
+</table>
 {% endblock %}

@@ -6,19 +6,23 @@
 <h3>Update Paper</h3>
 <form method="POST" enctype="multipart/form-data">   
     {% csrf_token %} 
-
-    {% for field in paper_form %}
-    <p>
-        {{ field.label_tag }}
-        {{ field }}
-        {% if field.help_text %}
-            <small style='color:gray;'>{{ field.help_text }}</small>
-        {% endif %}
-        {% for error in field.errors %}
-            <small style='color:red;'>{{ field.help_text }}</small>
+    <table>
+        {% for field in paper_form %}
+            <tr valign="top">
+                <td><b>{{ field.label_tag }}</b></td>
+                <td>{{ field }}</td>
+                <td>
+                    {% if field.help_text %}
+                        <small style='color:gray;'>{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <small style='color:red;'>{{ error }}</small>
+                    {% endfor %}
+                </td>
+            </tr>
         {% endfor %}
-    </p>
-    {% endfor %}
-    <button type="submit" class="btn btn-success">Update!</button>
-</form> 
+    </table>
+    <button type="submit" class="btn btn-success">Update</button>
+    <a href="/paper/{{ paper_id }}/delete""><button type="button" class="btn btn-danger">Delete</button></a>
+</form>
 {% endblock %}

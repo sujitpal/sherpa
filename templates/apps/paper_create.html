@@ -6,19 +6,22 @@
 <h3>Add New Paper</h3>
 <form method="POST" enctype="multipart/form-data">   
     {% csrf_token %} 
-
+    <table>
     {% for field in paper_form %}
-    <p>
-        {{ field.label_tag }}
-        {{ field }}
-        {% if field.help_text %}
-            <small style='color:gray;'>{{ field.help_text }}</small>
-        {% endif %}
-        {% for error in field.errors %}
-            <small style='color:red;'>{{ field.help_text }}</small>
-        {% endfor %}
-    </p>
+        <tr valign="top">
+            <td><b>{{ field.label_tag }}</b></td>
+            <td>{{ field }}</td>
+            <td>
+                {% if field.help_text %}
+                    <small style='color:gray;'>{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <small style='color:red;'>{{ error }}</small>
+                {% endfor %}
+            </td>
+        </tr>
     {% endfor %}
+    </table>
     <button type="submit" class="btn btn-success">Add Paper!</button>
 </form> 
 {% endblock %}

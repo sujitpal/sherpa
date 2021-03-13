@@ -106,15 +106,18 @@ def paperRetrievePage(request, pk):
     if not request.user.is_authenticated:
         return redirect('index')
     paper = get_object_or_404(Paper, pk=pk)
-    form = PaperForm(data=model_to_dict(paper))
-    context = { "paper_form": form }
+    paper_coauthors = ", ".join([ca.name for ca in paper.co_authors.all()])
+    context = {
+        "paper": paper,
+        "paper_author": paper.primary_author.name,
+        "paper_coauthors": paper_coauthors
+    }
     return render(request, 'apps/paper.html', context)
 
 
 def paperUpdatePage(request, pk):
     if not request.user.is_authenticated:
         return redirect('index')
-    context = {}
     paper = get_object_or_404(Paper, pk=pk)
     if request.POST:
         form = PaperForm(request.POST, instance=paper)
@@ -123,8 +126,11 @@ def paperUpdatePage(request, pk):
         return redirect('index')
     else:
         form = PaperForm(data=model_to_dict(paper))
-        context["paper_form"] = form
-    return render(request, 'apps/paper_update.html', context)
+        context = {
+            "paper_id": paper.id,
+            "paper_form": form
+        }
+        return render(request, 'apps/paper_update.html', context)
 
 
 def paperDeletePage(request, pk):
@@ -137,6 +143,10 @@ def paperDeletePage(request, pk):
 
 
 def paperListPage(request):
+    if not request.user.is_authenticated:
+        return redirect('index')
+    if not request.user.attendee.is_organizer:
+        return redirect('index')
     paper_list = Paper.objects.all()
     num_papers = paper_list.count()
     page = request.GET.get('page', 1)
@@ -149,7 +159,8 @@ def paperListPage(request):
         papers = paginator.page(paginator.num_pages)
     context = { 
         "papers" : papers,
-        "num_papers": num_papers
+        "num_papers": num_papers,
+        "logged_in_user": request.user.attendee
     }
     return render(request, 'apps/papers.html', context)
 

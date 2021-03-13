@@ -8,8 +8,8 @@
 <form method="POST" enctype="multipart/form-data"> 
     {% csrf_token %} 
     Are you want to delete this item ? 
-    <button type="submit" class="btn btn-success">Delete!</button> 
-    <a href="/">Cancel </a> 
+    <button type="submit" class="btn btn-danger">Delete!</button> 
+    <a href="/"><button type="button" class="btn btn-secondary">Cancel</button></a>
 </form> 
 
 {% endblock %}

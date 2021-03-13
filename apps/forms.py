@@ -29,7 +29,7 @@ class PaperForm(forms.ModelForm):
     abstract = forms.CharField(
         widget=forms.Textarea,
         required=True, 
-        help_text='Enter abstrct (suggested max 500 words) for presentation')
+        help_text='Enter abstract for presentation (suggested max 500 words)')
     keywords = forms.CharField(max_length=128, help_text='Enter keywords for presentation')
     author_choices = Attendee.objects.exclude(name__exact='')
     primary_author = forms.ModelChoiceField(
