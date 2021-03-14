@@ -6,6 +6,9 @@ from .views import (
     signInPage,
     signOutPage,
     attendeeListPage,
+    attendeeProfilePage,
+    attendeeSpeakerUpdatePage,
+    attendeeSpeakerViewPage,
     paperCreatePage,
     paperRetrievePage,
     paperUpdatePage,
@@ -24,16 +27,19 @@ urlpatterns = [
     path('signout/', signOutPage, name='sign_out'),
     # attendees
     path('attendees/', attendeeListPage, name='attendee_list'),
+    path('attendee/profile', attendeeProfilePage, name='attendee_update'),
+    path('attendee/speaker/update', attendeeSpeakerUpdatePage, name='attendee_speaker'),
+    path('attendee/speaker/<int:pk>', attendeeSpeakerViewPage, name='attendee_speaker'),
     # papers
     path('paper/new', paperCreatePage, name='paper_create'),
     path('paper/<int:pk>', paperRetrievePage, name='paper_retrieve'),
-    path('paper/<int:pk>/update/', paperUpdatePage, name='paper_update'),
-    path('paper/<int:pk>/delete/', paperDeletePage, name='paper_delete'),
+    path('paper/<int:pk>/update', paperUpdatePage, name='paper_update'),
+    path('paper/<int:pk>/delete', paperDeletePage, name='paper_delete'),
     path('papers/', paperListPage, name='paper_list'),
     # reviews
     path('review/<int:pk>/new', reviewCreatePage, name='review_create'),
     path('review/<int:pk>', reviewRetrievePage, name='review_retrieve'),
-    path('review/<int:pk>/update/', reviewUpdatePage, name='review_update'),
+    path('review/<int:pk>/update', reviewUpdatePage, name='review_update'),
     # dashboard
     path('dashboard/', dashboardPage, name='dashboard')
 ]

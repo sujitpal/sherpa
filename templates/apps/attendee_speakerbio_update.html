@@ -1,0 +1,29 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}
+Update Speaker Bio for {{ logged_in_user }}
+{% endblock %}
+
+{% block content %}
+<h3>Update Speaker Bio</h3>
+<form method="POST" enctype="multipart/form-data">   
+    {% csrf_token %} 
+    <table>
+        {% for field in speaker_form %}
+            <tr valign="top">
+                <td><b>{{ field.label_tag }}</b></td>
+                <td>{{ field }}</td>
+                <td>
+                    {% if field.help_text %}
+                        <small style='color:gray;'>{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <small style='color:red;'>{{ error }}</small>
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <button type="submit" class="btn btn-success">Update</button>
+</form>
+{% endblock %}

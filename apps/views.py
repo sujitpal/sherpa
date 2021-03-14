@@ -7,7 +7,13 @@ from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template.defaulttags import register
 
-from .forms import RegisterForm, PaperForm, ReviewForm
+from .forms import (
+    RegisterForm, 
+    ProfileForm,
+    SpeakerForm,
+    PaperForm, 
+    ReviewForm
+)
 from .models import Attendee, Paper, Review
 
 # Create your views here.
@@ -86,10 +92,79 @@ def attendeeListPage(request):
     return render(request, "apps/attendees.html", context)
 
 
+def attendeeProfilePage(request):
+    if not request.user.is_authenticated:
+        return redirect('index')
+    if request.POST:
+        form = ProfileForm(request.POST, instance=request.user.attendee)
+        if form.is_valid():
+            form.save()
+        return redirect('index')
+    else:
+        initial_data = {
+            'name': request.user.attendee.name,
+            'email': request.user.attendee.email,
+            'org': request.user.attendee.org,
+            'timezone': request.user.attendee.timezone
+        }
+        form = ProfileForm(initial=initial_data)
+        context = {
+            "profile_form": form,
+            "logged_in_user": request.user.attendee
+        }
+        return render(request, 'apps/attendee_profile_update.html', context)
+
+
+def _is_speaker(attendee):
+    # check if attendee has any papers that are accepted
+    num_papers_accepted = Paper.objects.filter(
+        primary_author__exact=attendee,
+        is_accepted=True).count()
+    return num_papers_accepted > 0
+
+
+def attendeeSpeakerUpdatePage(request):
+    if not request.user.is_authenticated:
+        return redirect('index')
+    if not _is_speaker(request.user.attendee):
+        return redirect('index')
+    if request.POST:
+        form = SpeakerForm(request.POST, instance=request.user.attendee)
+        speaker_bio = form.cleaned_data.get("speaker_bio")
+        print("speaker bio:", speaker_bio)
+        if form.is_valid():
+            form.save()
+        return redirect('index')
+    else:
+        initial_data = {
+            'speaker_bio': request.user.attendee.speaker_bio,
+            'speaker_avatar': request.user.attendee.speaker_avatar
+        }
+        form = SpeakerForm(initial=initial_data)
+        context = {
+            "speaker_form": form,
+            "logged_in_user": request.user.attendee
+        }
+        return render(request, 'apps/attendee_speakerbio_update.html', context)
+
+
+def attendeeSpeakerViewPage(request, pk):
+    logged_in_user = None
+    if request.user.is_authenticated:
+        logged_in_user = request.user.attendee
+    speaker = get_object_or_404(Attendee, pk=pk)
+    if not _is_speaker(speaker):
+        return redirect('index')
+    context = {
+        "speaker": speaker,
+        "logged_in_user": logged_in_user
+    }
+    return render(request, "apps/attendee_speakerbio_view.html", context)
+
+
 def paperCreatePage(request):
     if not request.user.is_authenticated:
         return redirect('index')
-    context = {}
     if request.POST:
         form = PaperForm(request.POST)
         form.primary_author = request.user.attendee
@@ -98,19 +173,25 @@ def paperCreatePage(request):
         return redirect('index')
     else:
         form = PaperForm()
-        context["paper_form"] = form
+        context = {
+            'paper_form': form,
+            'logged_in_user': request.user.attendee
+        }
         return render(request, "apps/paper_create.html", context)
 
 
 def paperRetrievePage(request, pk):
-    if not request.user.is_authenticated:
-        return redirect('index')
     paper = get_object_or_404(Paper, pk=pk)
+    # TODO: paper is visible to general public only if accepted, otherwise
+    # to organizer and author / co-authors of paper
+    if not paper.is_accepted:
+        return redirect('index')
     paper_coauthors = ", ".join([ca.name for ca in paper.co_authors.all()])
     context = {
         "paper": paper,
         "paper_author": paper.primary_author.name,
-        "paper_coauthors": paper_coauthors
+        "paper_coauthors": paper_coauthors,
+        "logged_in_user": request.user.attendee
     }
     return render(request, 'apps/paper.html', context)
 

@@ -1,0 +1,26 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}
+Speaker Bio for {{ speaker }}
+{% endblock %}
+
+{% block content %}
+<h3>Speaker Bio: {{ speaker }}</h3>
+<form method="POST" enctype="multipart/form-data">   
+    {% csrf_token %}
+    <table>
+        <tr>
+            <td valign="top">
+                <img src="{{ speaker.speaker_avatar.url }}" 
+                    alt="Speaker Image" width="250" height="250">
+            </td>
+            <td>
+                <p><b>Name: </b>{{ speaker.name }}</p>
+                <p><b>Email: </b>{{ speaker.email }}</p>
+                <p><b>Bio</b></p>
+                {{ speaker.speaker_bio }}
+            </td>
+        </tr>
+    </table>
+</form>
+{% endblock %}

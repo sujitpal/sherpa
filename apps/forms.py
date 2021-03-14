@@ -23,6 +23,32 @@ class RegisterForm(UserCreationForm):
             raise ValidationError('Account with this email already exists, please Login using the link below. If you have forgotten your password, click Forgot Password.')
 
 
+class ProfileForm(forms.ModelForm):
+    name = forms.CharField(max_length=128, required=True, help_text='Enter your name')
+    email = forms.EmailField(max_length=128, required=True, help_text='Enter your email')
+    org = forms.ChoiceField(choices=Attendee.ORGS, required=True, help_text='Choose your organization')
+    timezone = forms.ChoiceField(choices=Attendee.TIMEZONES, required=True, help_text='Choose your timezone')
+    class Meta:
+        model = Attendee
+        fields = [
+            'name', 'email', 'org', 'timezone',
+        ]
+
+
+class SpeakerForm(forms.ModelForm):
+    speaker_bio = forms.CharField(
+        widget=forms.Textarea,
+        required=True,
+        help_text='Enter speaker bio (suggested max 250 words)'
+    )
+    speaker_avatar = forms.FileField()
+    class Meta:
+        model = Attendee
+        fields = [ 
+            'speaker_bio', 'speaker_avatar'
+        ]
+
+
 class PaperForm(forms.ModelForm):
     paper_type = forms.ChoiceField(choices=Paper.PAPER_TYPES, required=True, help_text='Choose presentation type')
     title = forms.CharField(max_length=128, required=True, help_text='Enter title for your presentation')
@@ -53,8 +79,6 @@ class PaperForm(forms.ModelForm):
 
 class ReviewForm(forms.ModelForm):
     paper_choices = Paper.objects.all()
-    # paper = forms.ModelChoiceField(queryset=paper_choices,
-    #     required=True, help_text='Choose Paper')
     score = forms.ChoiceField(choices=Review.SCORES, 
         required=True, help_text='Enter review score')
     comments = forms.CharField(widget=forms.Textarea, 
