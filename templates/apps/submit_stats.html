@@ -1,0 +1,96 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}
+Paper Submission Statistics
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Paper Submission Statistics</h1>
+    <hr/>
+    <h3>By Paper Type</h3>
+    <table>
+        <tr>
+            <td width="75%">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Paper Type</th>
+                        <th>Number of Papers</th>
+                    </tr>
+                    {% for paper_type, num_papers in papers_by_type %}
+                    <tr>
+                        <td>{{ paper_type }}</td>
+                        <td>{{ num_papers }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <th>Total</th>
+                        <th>{{ papers_by_type_totals }}</th>
+                    </tr>
+                </table>
+            </td>
+            <td width="25%">
+                <div style="width:600;height:500">
+                    {{ papers_by_type_pie|safe }}
+                </div>
+            </td>
+        </tr>
+    </table>
+    <h3>By Organization</h3>
+    <table>
+        <tr>
+            <td width="75%">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Organization</th>
+                        <th>Number of Papers</th>
+                    </tr>
+                    {% for org, num_papers in papers_by_org %}
+                    <tr>
+                        <td>{{ org }}</td>
+                        <td>{{ num_papers }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <th>Total</th>
+                        <th>{{ papers_by_org_totals }}</th>
+                    </tr>
+                </table>
+            </td>
+            <td width="25%">
+                <div style="width:600;height:500">
+                    {{ papers_by_org_pie|safe }}
+                </div>
+            </td>
+        </tr>
+    </table>
+    <h3>By Timezone</h3>
+    <table>
+        <tr>
+            <td width="75%">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Timezone</th>
+                        <th>Number of Papers</th>
+                    </tr>
+                    {% for timezone, num_papers in papers_by_tz %}
+                    <tr>
+                        <td>{{ timezone }}</td>
+                        <td>{{ num_papers }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <th>Total</th>
+                        <th>{{ papers_by_tz_totals }}</th>
+                    </tr>
+                </table>
+            </td>
+            <td width="25%">
+                <div style="width:600;height:500">
+                    {{ papers_by_tz_pie|safe }}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
