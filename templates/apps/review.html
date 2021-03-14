@@ -4,16 +4,42 @@
 
 {% block content %}
 <h3>Review Details</h3>
+
 <table>
-    <tr>
+    <tr valign="top">
         <td><b>Reviewer:</b></td>
-        <td>{{ reviewer }}</td>
+        <td>{{ review.reviewer }}</td>
+        <td></td>
     </tr>
-{% for field in review_form %}
-    <tr>
-        <td><b>{{ field.label_tag }}</b></td>
-        <td>{{ field }}</td>
+    <tr valign="top">
+        <td><b>Paper Title:</b></td>
+        <td>{{ review.paper.title }}</td>
+        <td></td>
     </tr>
-{% endfor %}
+    <tr valign="top">
+        <td><b>Abstract:</b></td>
+        <td>{{ review.paper.abstract }}</td>
+        <td></td>
+    </tr>
+    <tr valign="top">
+        <td><b>Keywords:</b></td>
+        <td>{{ review.paper.keywords }}</td>
+        <td></td>
+    </tr>
+    <tr valign="top">
+        <td><b>Score</b></td>
+        <td>
+            {{ review.score }}&nbsp;
+            <span style="color: gold;">
+            {% for i in star_rating %}
+                <i class="fas fa-star"></i>
+            {% endfor %}
+            </span>
+        </td>
+    </tr>
+    <tr valign="top">
+        <td><b>Review Comments:</b></td>
+        <td>{{ review.comments }}</td>
+    </tr>
 </table>
 {% endblock %}

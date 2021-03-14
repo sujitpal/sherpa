@@ -53,8 +53,8 @@ class PaperForm(forms.ModelForm):
 
 class ReviewForm(forms.ModelForm):
     paper_choices = Paper.objects.all()
-    paper = forms.ModelChoiceField(queryset=paper_choices,
-        required=True, help_text='Choose Paper')
+    # paper = forms.ModelChoiceField(queryset=paper_choices,
+    #     required=True, help_text='Choose Paper')
     score = forms.ChoiceField(choices=Review.SCORES, 
         required=True, help_text='Enter review score')
     comments = forms.CharField(widget=forms.Textarea, 
@@ -63,5 +63,5 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
         fields = [
-            'paper', 'score', 'comments'
+            'score', 'comments'
         ]

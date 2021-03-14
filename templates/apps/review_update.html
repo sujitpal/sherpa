@@ -8,6 +8,49 @@
     {% csrf_token %} 
     <h3>Review Details</h3>
     <table>
+        <tr valign="top">
+            <td><b>Reviewer:</b></td>
+            <td>{{ review.reviewer }}</td>
+            <td></td>
+        </tr>
+        <tr valign="top">
+            <td><b>Paper Title:</b></td>
+            <td>{{ review.paper.title }}</td>
+            <td></td>
+        </tr>
+        <tr valign="top">
+            <td><b>Abstract:</b></td>
+            <td>{{ review.paper.abstract }}</td>
+            <td></td>
+        </tr>
+        <tr valign="top">
+            <td><b>Keywords:</b></td>
+            <td>{{ review.paper.keywords }}</td>
+            <td></td>
+        </tr>
+    </table>
+    <hr/>
+    <form method="POST" enctype="multipart/form-data">   
+        {% csrf_token %} 
+        <table>
+            {% for field in review_form %}
+            <tr valign="top">
+                <td><b>{{ field.label_tag }}</b></td>
+                <td>{{ field }}</td>
+                <td><small style='color:gray;'>{{ field.help_text }}</small></td>
+            </tr>
+            {% endfor %}
+        </table>
+        <button type="submit" class="btn btn-success">Update!</button>
+    </form> 
+
+
+
+
+
+
+
+    <!-- <table>
         <tr>
             <td><b>Reviewer:</b></td>
             <td>{{ reviewer }}</td>
@@ -20,5 +63,5 @@
     {% endfor %}
     </table>
     <button type="submit" class="btn btn-success">Update!</button>
-</form> 
+</form>  -->
 {% endblock %}

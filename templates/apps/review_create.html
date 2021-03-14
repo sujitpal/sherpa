@@ -6,22 +6,34 @@
 <h3>New Review by {{ reviewer }}</h3>
 <form method="POST" enctype="multipart/form-data">   
     {% csrf_token %} 
-
     <table>
-    {% for field in review_form %}
-        <tr>
+        <tr valign="top">
+            <td><b>Reviewer:</b></td>
+            <td>{{ init_data.reviewer }}</td>
+            <td></td>
+        </tr>
+        <tr valign="top">
+            <td><b>Paper Title:</b></td>
+            <td>{{ init_data.paper.title }}</td>
+            <td></td>
+        </tr>
+        <tr valign="top">
+            <td><b>Abstract:</b></td>
+            <td>{{ init_data.paper.abstract }}</td>
+            <td></td>
+        </tr>
+        <tr valign="top">
+            <td><b>Keywords:</b></td>
+            <td>{{ init_data.paper.keywords }}</td>
+            <td></td>
+        </tr>
+        {% for field in review_form %}
+        <tr valign="top">
             <td><b>{{ field.label_tag }}</b></td>
             <td>{{ field }}</td>
-            <td>
-            {% if field.help_text %}
-                <small style='color:gray;'>{{ field.help_text }}</small>    
-            {% endif %}
-            {% for error in field.errors %}
-                <small style='color:red;'>{{ field.help_text }}</small>
-            {% endfor %}
-            </td>
+            <td><small style='color:gray;'>{{ field.help_text }}</small></td>
         </tr>
-    {% endfor %}
+        {% endfor %}
     </table>
     <button type="submit" class="btn btn-success">Add Paper!</button>
 </form> 

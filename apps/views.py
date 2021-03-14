@@ -165,40 +165,60 @@ def paperListPage(request):
     return render(request, 'apps/papers.html', context)
 
 
-def reviewCreatePage(request):
+def reviewCreatePage(request, pk):
     if not request.user.is_authenticated:
         return redirect('index')
-    reviewer = request.user.attendee
-    if not reviewer.is_reviewer:
-        raise PermissionDenied
+    if not request.user.attendee.is_reviewer:
+        return redirect('index')
+    paper = get_object_or_404(Paper, pk=pk)
     if request.POST:
         form = ReviewForm(request.POST)
-        form.reviewer = reviewer
         if form.is_valid():
-            review = form.save(commit=False)
-            review.reviewer = reviewer
-            review.save()
+            review_form = form.save(commit=False)
+            review_form.reviewer = request.user.attendee
+            review_form.paper = paper
+            review_form.save()
         return redirect('index')
     else:
-        form = ReviewForm()
+        init_data = {
+            "reviewer": request.user.attendee,
+            "paper": paper
+        }
+        form = ReviewForm(initial=init_data)
         context = {
             "review_form": form,
-            "reviewer": str(reviewer)
+            "init_data": init_data,
+            "logged_in_user": request.user.attendee
         }
         return render(request, "apps/review_create.html", context)
+
+
+def _get_star_rating(review_score):
+    if review_score == "Strong Accept":
+        star_rating = 4
+    elif review_score == "Accept":
+        star_rating = 3
+    elif review_score == "Maybe Accept":
+        star_rating = 2
+    elif review_score == "Reject":
+        star_rating = 1
+    else:
+        star_rating = 0
+    return star_rating
 
 
 def reviewRetrievePage(request, pk):
     if not request.user.is_authenticated:
         return redirect('index')
-    reviewer = request.user.attendee
-    if not reviewer.is_reviewer:
-        raise PermissionDenied
-    review = get_object_or_404(Review, pk=pk)
-    form = ReviewForm(data=model_to_dict(review))
+    if not request.user.attendee.is_reviewer:
+        return redirect('index')
+    paper = get_object_or_404(Paper, pk=pk)
+    review = Review.objects.get(paper=paper, reviewer=request.user.attendee)
+    star_rating = range(_get_star_rating(review.score))
     context = { 
-        "review_form": form,
-        "reviewer": str(reviewer)
+        "review": review,
+        "logged_in_user": request.user.attendee,
+        "star_rating": star_rating
     }
     return render(request, 'apps/review.html', context)
 
@@ -206,20 +226,23 @@ def reviewRetrievePage(request, pk):
 def reviewUpdatePage(request, pk):
     if not request.user.is_authenticated:
         return redirect('index')
-    reviewer = request.user.attendee
-    if not reviewer.is_reviewer:
-        raise PermissionDenied
-    context = {}
-    review = get_object_or_404(Review, pk=pk)
+    if not request.user.attendee.is_reviewer:
+        return redirect('index')
+    paper = get_object_or_404(Paper, pk=pk)
+    review = Review.objects.get(paper=paper, reviewer=request.user.attendee)
     if request.POST:
         form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
             form.save()
         return redirect('index')
     else:
-        form = ReviewForm(data=model_to_dict(review))
-        context["review_form"] = form
-    return render(request, 'apps/review_update.html', context)
+        review_form = ReviewForm(data=model_to_dict(review))
+        context = {
+            "review": review,
+            "review_form": review_form,
+            "logged_in_user": request.user.attendee
+        }
+        return render(request, 'apps/review_update.html', context)
 
 
 def dashboardPage(request):
