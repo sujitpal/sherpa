@@ -15,8 +15,8 @@ from .views import (
     paperDeletePage,
     paperListPage,
     reviewCreatePage,
-    reviewRetrievePage,
     reviewUpdatePage,
+    reviewRetrievePage,
     dashboardPage,
     submissionStatsPage,
 )
@@ -33,14 +33,14 @@ urlpatterns = [
     path('attendee/speaker/<int:pk>', attendeeSpeakerViewPage, name='attendee_speaker'),
     # papers
     path('paper/new', paperCreatePage, name='paper_create'),
-    path('paper/<int:pk>', paperRetrievePage, name='paper_retrieve'),
     path('paper/<int:pk>/update', paperUpdatePage, name='paper_update'),
     path('paper/<int:pk>/delete', paperDeletePage, name='paper_delete'),
+    path('paper/<int:pk>', paperRetrievePage, name='paper_retrieve'),
     path('papers/', paperListPage, name='paper_list'),
     # reviews
     path('review/<int:pk>/new', reviewCreatePage, name='review_create'),
-    path('review/<int:pk>', reviewRetrievePage, name='review_retrieve'),
     path('review/<int:pk>/update', reviewUpdatePage, name='review_update'),
+    path('review/<int:pk>', reviewRetrievePage, name='review_retrieve'),
     # dashboard
     path('dashboard/', dashboardPage, name='dashboard'),
     # submission stats

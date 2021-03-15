@@ -64,16 +64,21 @@ Dashboard for {{ logged_in_user }}
             <tbody>
             {% for paper, is_reviewed in my_review_tasks %}
                 <tr>
+                    {% if is_reviewed %}
                     <td>
-                        <a href="/review/{{ paper.id }}/{{ logged_in_user.id }}/update">{{ paper.title }} ({{ paper.paper_type }})</a>
+                        <a href="/review/{{ paper.id }}/update">{{ paper.title }} ({{ paper.paper_type }})</a>
                     </td>
                     <td>
-                        {% if is_reviewed %}
                         <span style="color: green;"><i class="fas fa-check"></i></span>
-                        {% else %}
-                        <span style="color: red;"><i class="fas fa-times"></i></span>
-                        {% endif %}
                     </td>
+                    {% else %}
+                    <td>
+                        <a href="/review/{{ paper.id }}/new">{{ paper.title }} ({{ paper.paper_type }})</a>
+                    </td>
+                    <td>
+                        <span style="color: red;"><i class="fas fa-times"></i></span>
+                    </td>
+                    {% endif %}
                 </tr>
             {% endfor %}    
             </tbody>

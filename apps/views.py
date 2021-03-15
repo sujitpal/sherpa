@@ -354,7 +354,8 @@ def reviewUpdatePage(request, pk):
     if not request.user.attendee.is_reviewer:
         return redirect('index')
     paper = get_object_or_404(Paper, pk=pk)
-    review = Review.objects.get(paper=paper, reviewer=request.user.attendee)
+    # review = Review.objects.get(paper=paper, reviewer=request.user.attendee)
+    review = None
     if request.POST:
         form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
