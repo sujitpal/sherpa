@@ -54,7 +54,7 @@ REViEW_SCORES = [
     (1, 'Reject')
 ]
 for score, decision in REViEW_SCORES:
-    rs = ReviewScore(review_score=score, review_decision=decision)
+    rs = ReviewScore.objects.create(review_score=score, review_decision=decision)
 
 
 REJECT_REASONS = [
@@ -64,4 +64,4 @@ REJECT_REASONS = [
     'Other'
 ]
 for reject_reason in REJECT_REASONS:
-    rr = RejectionReason(reject_reason=reject_reason)
+    rr = RejectionReason.objects.create(reject_reason=reject_reason)

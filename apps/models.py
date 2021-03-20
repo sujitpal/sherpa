@@ -91,6 +91,10 @@ class Paper(models.Model):
     submitted_at = models.DateTimeField(default=datetime.now)
     # updated by admin after paper is accepted
     is_accepted = models.BooleanField(default=False)
+    # speaker to fill in after paper accepted
+    accept_speaker_invite = models.BooleanField(default=False)
+    extra_long_paper = models.BooleanField(default=False)
+    publish_full_paper_in_ssrn = models.BooleanField(default=False)
     # updated by admin for conference schedule
     scheduled_at = models.DateTimeField(default=datetime.now, blank=True)
     # updated by speaker after conference
@@ -118,6 +122,7 @@ class RejectionReason(models.Model):
 
 
 class Review(models.Model):
+    # create / update review
     reviewer = models.ForeignKey(
         'apps.Attendee', related_name='reviewer_name', on_delete=models.CASCADE)
     paper = models.ForeignKey(
