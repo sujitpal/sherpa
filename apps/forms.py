@@ -100,11 +100,14 @@ class SpeakerForm(forms.ModelForm):
 
 
 class PaperForm(forms.ModelForm):
-    paper_type = forms.ChoiceField(
-        choices=PaperType.objects.all(), 
+    paper_type = forms.ModelChoiceField(
+        queryset=PaperType.objects.all(), 
         required=True, 
         help_text='Choose presentation type')
-    title = forms.CharField(max_length=128, required=True, help_text='Enter title for your presentation')
+    title = forms.CharField(
+        max_length=128, 
+        required=True, 
+        help_text='Enter title for your presentation')
     abstract = forms.CharField(
         widget=forms.Textarea,
         required=True, 
