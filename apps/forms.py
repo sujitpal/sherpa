@@ -140,12 +140,12 @@ class PaperForm(forms.ModelForm):
 
 class ReviewForm(forms.ModelForm):
     paper_choices = Paper.objects.all()
-    decision = forms.ChoiceField(
-        choices=ReviewScore.objects.all(), 
+    decision = forms.ModelChoiceField(
+        queryset=ReviewScore.objects.all(), 
         required=True, 
         help_text='Enter review score')
-    reason_if_rejected = forms.ChoiceField(
-        choices=RejectionReason.objects.all(),
+    reason_if_rejected = forms.ModelChoiceField(
+        queryset=RejectionReason.objects.all(),
         required=False,
         help_text='Reasons for rejection (if rejected)')
     comments = forms.CharField(widget=forms.Textarea, 

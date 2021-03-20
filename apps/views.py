@@ -18,7 +18,16 @@ from .forms import (
     PaperForm, 
     ReviewForm
 )
-from .models import Attendee, Paper, Review
+from .models import (
+    Organization,
+    TimeZone,
+    Attendee, 
+    PaperType,
+    PaperTheme,
+    Paper, 
+    ReviewScore,
+    Review
+)
 
 def _is_speaker(attendee):
     # check if attendee has any papers that are accepted
@@ -241,7 +250,7 @@ def paperCreatePage(request):
         return redirect('index')
     if request.POST:
         form = PaperForm(request.POST)
-        form.primary_author = request.user.attendee
+        form.primary_author = requpdateuest.user.attendee
         if form.is_valid():
             form.save()
         return redirect('index')
@@ -261,8 +270,11 @@ def paperRetrievePage(request, pk):
     if not paper.is_accepted:
         return redirect('index')
     paper_coauthors = ", ".join([ca.name for ca in paper.co_authors.all()])
+    themes = PaperTheme.objects.filter(paper=paper)
+    paper.themes.set(themes)
     context = {
         "paper": paper,
+        'paper_themes': themes,
         "paper_author": paper.primary_author.name,
         "paper_coauthors": paper_coauthors,
         "logged_in_user": _get_logged_in_user(request)

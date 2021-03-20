@@ -18,6 +18,16 @@
         <td>{{ paper.abstract }}</td>
     </tr>
     <tr valign="top">
+        <td><b>Themes:</b></td>
+        <td>
+            <ul>
+                {% for theme in paper_themes %}
+                <li>{{ theme }}</li>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+    <tr valign="top">
         <td><b>Keywords:</b></td>
         <td>{{ paper.keywords }}</td>
     </tr>
