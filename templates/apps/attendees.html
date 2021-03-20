@@ -12,6 +12,8 @@
         <th>Email</th>
         <th>Organization</th>
         <th>Timezone</th>
+        <th>Interested to Volunteer?</th>
+        <th>Interested to speak?</th>
       </tr>
     </thead>
     <tbody>
@@ -21,6 +23,20 @@
             <td>{{ attendee.email }}</td>
             <td>{{ attendee.org }}</td>
             <td>{{ attendee.timezone }}</td>
+            <td>
+              {% if attendee.interested_in_volunteering %}
+              <span style="color: green;"><i class="fas fa-check"></i></span>
+              {% else %}
+              <span style="color: red;"><i class="fas fa-times"></i></span>
+              {% endif %}
+            </td>
+            <td>
+              {% if attendee.interested_in_speaking %}
+              <span style="color: green;"><i class="fas fa-check"></i></span>
+              {% else %}
+              <span style="color: red;"><i class="fas fa-times"></i></span>
+              {% endif %}
+            </td>
         </tr>
     {% endfor %}
     </tbody>

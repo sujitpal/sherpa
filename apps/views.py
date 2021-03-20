@@ -109,6 +109,8 @@ def signUpPage(request):
             email_address = form.cleaned_data.get('email_address')
             org = form.cleaned_data.get('org')
             timezone = form.cleaned_data.get('timezone')
+            volunteer_interest = form.cleaned_data.get('interested_in_volunteering')
+            speaking_interest = form.cleaned_data.get('interested_in_speaking')
             user.username = email_address
             user.save()
             user.email = email_address
@@ -118,6 +120,8 @@ def signUpPage(request):
             user.attendee.email = email_address
             user.attendee.org = org
             user.attendee.timezone = timezone
+            user.attendee.interested_in_volunteering = volunteer_interest
+            user.attendee.interested_in_speaking = speaking_interest
             user.attendee.save()
             user.save()
             # authenticate and login
@@ -182,9 +186,11 @@ def attendeeProfilePage(request):
     else:
         initial_data = {
             'name': request.user.attendee.name,
-            'email': request.user.attendee.email,
+            'email_address': request.user.attendee.email,
             'org': request.user.attendee.org,
-            'timezone': request.user.attendee.timezone
+            'timezone': request.user.attendee.timezone,
+            'interested_in_volunteering': request.user.attendee.interested_in_volunteering,
+            'interested_in_speaking': request.user.attendee.interested_in_speaking
         }
         form = ProfileForm(initial=initial_data)
         context = {

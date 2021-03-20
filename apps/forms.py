@@ -16,8 +16,14 @@ from .models import (
 )
 
 class RegisterForm(UserCreationForm):
-    name = forms.CharField(max_length=128, required=True, help_text='Enter your name')
-    email_address = forms.EmailField(max_length=128, required=True, help_text='Enter your email')
+    name = forms.CharField(
+        max_length=128, 
+        required=True, 
+        help_text='Enter your name')
+    email_address = forms.EmailField(
+        max_length=128, 
+        required=True, 
+        help_text='Enter your email')
     org = forms.ModelChoiceField(
         queryset=Organization.objects.all(), 
         required=True, 
@@ -26,11 +32,18 @@ class RegisterForm(UserCreationForm):
         queryset=TimeZone.objects.all(), 
         required=True, 
         help_text='Choose your timezone')
+    interested_in_volunteering = forms.BooleanField(
+        required=False,
+        help_text='Check box if interested in volunteering for Summit')
+    interested_in_speaking = forms.BooleanField(
+        required=False,
+        help_text='Check box if interested in speaking at Summit')
 
     class Meta:
         model = User
         fields = [
             'name', 'email_address', 'org', 'timezone',
+            'interested_in_volunteering', 'interested_in_speaking'
         ]
     
     def clean_email(self):
@@ -41,30 +54,34 @@ class RegisterForm(UserCreationForm):
 
 
 class ProfileForm(forms.ModelForm):
-    name = forms.CharField(max_length=128, required=True, help_text='Enter your name')
-    email = forms.EmailField(max_length=128, required=True, help_text='Enter your email')
-    org = forms.ChoiceField(
-        choices=Organization.objects.all(), 
+    name = forms.CharField(
+        max_length=128, 
+        required=True, 
+        help_text='Enter your name')
+    email_address = forms.EmailField(
+        max_length=128, 
+        required=True, 
+        help_text='Enter your email')
+    org = forms.ModelChoiceField(
+        queryset=Organization.objects.all(), 
         required=True, 
         help_text='Choose your organization')
-    timezone = forms.ChoiceField(
-        choices=TimeZone.objects.all(), 
+    timezone = forms.ModelChoiceField(
+        queryset=TimeZone.objects.all(), 
         required=True, 
         help_text='Choose your timezone')
     interested_in_volunteering = forms.BooleanField(
         required=False,
-        help_text='Please select if interested in volunteering')
+        help_text='Check box if interested in volunteering for Summit')
     interested_in_speaking = forms.BooleanField(
         required=False,
-        help_text='Please check if interested in speaking')
-
+        help_text='Check box if interested in speaking at Summit')
 
     class Meta:
         model = Attendee
         fields = [
-            'name', 'email', 'org', 'timezone',
-            'interested_in_volunteering',
-            'interested_in_speaking'
+            'name', 'email_address', 'org', 'timezone',
+            'interested_in_volunteering', 'interested_in_speaking'
         ]
 
 
