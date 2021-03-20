@@ -18,7 +18,7 @@ for org_name in ORG_NAMES:
     org = Organization.objects.create(org_name=org_name)
 
 
-UTC_OFFSETS = ['UTC-{:+d}'.format(i) for i in range(-12, 12, 1)]
+UTC_OFFSETS = ['UTC{:+d}'.format(i) for i in range(-12, 12, 1)]
 for utc_offset in UTC_OFFSETS:
     tz = TimeZone.objects.create(utc_offset=utc_offset)
 

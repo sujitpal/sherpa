@@ -49,7 +49,7 @@ class Attendee(models.Model):
         if self.name == '':
             return '{:s} (signup pending)'.format(self.user.username)
         else:
-            return '{:s} ({:s})'.format(self.name, self.org)
+            return '{:s} ({:s})'.format(self.name, self.org.org_name)
 
 
 @receiver(post_save, sender=User)

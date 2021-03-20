@@ -17,25 +17,25 @@ from .models import (
 
 class RegisterForm(UserCreationForm):
     name = forms.CharField(max_length=128, required=True, help_text='Enter your name')
-    email = forms.EmailField(max_length=128, required=True, help_text='Enter your email')
-    org = forms.ChoiceField(
-        choices=Organization.objects.all(), 
+    email_address = forms.EmailField(max_length=128, required=True, help_text='Enter your email')
+    org = forms.ModelChoiceField(
+        queryset=Organization.objects.all(), 
         required=True, 
         help_text='Choose your organization')
-    timezone = forms.ChoiceField(
-        choices=TimeZone.objects.all(), 
+    timezone = forms.ModelChoiceField(
+        queryset=TimeZone.objects.all(), 
         required=True, 
         help_text='Choose your timezone')
 
     class Meta:
         model = User
         fields = [
-            'name', 'email', 'org', 'timezone',
+            'name', 'email_address', 'org', 'timezone',
         ]
     
     def clean_email(self):
-        email = self.cleaned_data['email']
-        user = User.objects.filter(username__exact=email)
+        email_address = self.cleaned_data['email_address']
+        user = User.objects.filter(username__exact=email_address)
         if user:
             raise ValidationError('Account with this email already exists, please Login using the link below. If you have forgotten your password, click Forgot Password.')
 

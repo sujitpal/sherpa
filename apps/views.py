@@ -101,17 +101,27 @@ def signUpPage(request):
     if request.POST:
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            user.refresh_from_db()
-            user.attendee.name = form.cleaned_data.get('name')
-            user.attendee.email = form.cleaned_data.get('email')
-            user.attendee.org = form.cleaned_data.get('org')
-            user.attendee.timezone = form.cleaned_data.get('timezone')
-            user.username = user.attendee.email
-            user.save()
-            username = form.cleaned_data.get('email')
+            user = form.save(commit=False)
+            # extract form fields
             password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
+            # update user
+            name = form.cleaned_data.get('name')
+            email_address = form.cleaned_data.get('email_address')
+            org = form.cleaned_data.get('org')
+            timezone = form.cleaned_data.get('timezone')
+            user.username = email_address
+            user.save()
+            user.email = email_address
+            if not user.attendee:
+                user.attendee = Attendee.objects.get(user=user)
+            user.attendee.name = name
+            user.attendee.email = email_address
+            user.attendee.org = org
+            user.attendee.timezone = timezone
+            user.attendee.save()
+            user.save()
+            # authenticate and login
+            user = authenticate(username=email_address, password=password)
             login(request, user)
             return redirect('index')
         else:
