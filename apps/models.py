@@ -7,22 +7,34 @@ from datetime import datetime
 
 # Create your models here.
 
-class Attendee(models.Model):
-    ORGS = [
-        ("LexisNexis", 'LexisNexis'),
-        ("Elsevier", 'Elsevier'),
-        ("Exhibitions", 'Exhibitions'),
-        ("RELX", 'RELX'),
-        ("External", 'External')
-    ]
-    TIMEZONES = [('UTC{:+d}'.format(i), 'UTC{:+d}'.format(i)) for i in range(-12, 12, 1)]
+class Organization(models.Model):
+    org_name = models.CharField(max_length=32, blank=True)
 
+    def __str__(self):
+        return self.org_name
+
+
+class TimeZone(models.Model):
+    utc_offset = models.CharField(max_length=16, blank=True)
+
+    def __str__(self):
+        return self.utc_offset
+
+
+class Attendee(models.Model):
     # gets filled on initial signup
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=128, blank=True)
     email = models.EmailField(max_length=128, blank=True)
-    org = models.CharField(max_length=32, choices=ORGS, default=0)
-    timezone = models.CharField(max_length=32, choices=TIMEZONES, default=12)
+    org = models.ForeignKey(
+        'apps.Organization', related_name='org', 
+        null=True, on_delete=models.CASCADE)
+    timezone = models.ForeignKey(
+        'apps.TimeZone', related_name='timezone', 
+        null=True, on_delete=models.CASCADE)
+    interested_in_volunteering = models.BooleanField(default=False)
+    interested_in_speaking = models.BooleanField(default=False)
+
     # gets filled only when paper accepted
     speaker_bio = models.TextField(blank=True)
     speaker_avatar = models.FileField(upload_to='avatars', blank=True)
@@ -51,18 +63,27 @@ def save_user_attendee(sender, instance, **kwargs):
     instance.attendee.save()
 
 
-class Paper(models.Model):
-    PAPER_TYPES = [
-        ('Long Form', 'Long Form'),
-        ('Short Form', 'Short Form'),
-        ('Workshop', 'Workshop'),
-        ('Poster', 'Poster')
-    ]
+class PaperType(models.Model):
+    paper_type_name = models.CharField(max_length=16, blank=False)
 
+    def __str__(self):
+        return self.paper_type_name
+
+
+class PaperTheme(models.Model):
+    paper_theme = models.CharField(max_length=32, blank=False)
+
+    def __str__(self):
+        return self.paper_theme
+
+
+class Paper(models.Model):
     # entered by author during submission
-    paper_type = models.CharField(max_length=16, choices=PAPER_TYPES, default=0)
+    paper_type = models.ForeignKey(
+        'apps.PaperType', related_name='paper_type', on_delete=models.CASCADE)
     title = models.CharField(max_length=128, blank=False)
     abstract = models.TextField(blank=False)
+    themes = models.ManyToManyField(PaperTheme, blank=False)
     keywords = models.CharField(max_length=128, blank=False)
     primary_author = models.ForeignKey(
         'apps.Attendee', related_name='primary_author', on_delete=models.CASCADE)
@@ -81,20 +102,31 @@ class Paper(models.Model):
             self.title, self.primary_author.name.split()[-1])
 
 
-class Review(models.Model):
-    SCORES = [
-        ('--', "--"),
-        ('Strong Accept', 'Strong Accept'),
-        ('Accept', 'Accept'),
-        ('Maybe Accept', 'Maybe Accept'),
-        ('Reject', 'Reject'),
-    ]
+class ReviewScore(models.Model):
+    review_decision = models.CharField(max_length=16, blank=False)
+    review_score = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.review_decision
+
+
+class RejectionReason(models.Model):
+    reject_reason = models.CharField(max_length=32, blank=False)
+
+    def __str__(self):
+        return self.reject_reason
+
+
+class Review(models.Model):
     reviewer = models.ForeignKey(
         'apps.Attendee', related_name='reviewer_name', on_delete=models.CASCADE)
     paper = models.ForeignKey(
         'apps.Paper', related_name='paper', on_delete=models.CASCADE)
-    score = models.CharField(max_length=16, choices=SCORES, default=0)
+    decision = models.ForeignKey(
+        'apps.ReviewScore', related_name='decision', null=True, on_delete=models.CASCADE)
+    reason_if_rejected = models.ForeignKey(
+        'apps.RejectionReason', related_name='reason_if_rejected',
+        null=True, on_delete=models.CASCADE)
     comments = models.TextField(blank=True)
 
     def __str__(self):

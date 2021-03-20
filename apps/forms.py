@@ -3,13 +3,30 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Attendee, Paper, Review
+from .models import (
+    Organization,
+    TimeZone,
+    Attendee, 
+    PaperType,
+    PaperTheme,
+    Paper, 
+    ReviewScore,
+    RejectionReason,
+    Review
+)
 
 class RegisterForm(UserCreationForm):
     name = forms.CharField(max_length=128, required=True, help_text='Enter your name')
     email = forms.EmailField(max_length=128, required=True, help_text='Enter your email')
-    org = forms.ChoiceField(choices=Attendee.ORGS, required=True, help_text='Choose your organization')
-    timezone = forms.ChoiceField(choices=Attendee.TIMEZONES, required=True, help_text='Choose your timezone')
+    org = forms.ChoiceField(
+        choices=Organization.objects.all(), 
+        required=True, 
+        help_text='Choose your organization')
+    timezone = forms.ChoiceField(
+        choices=TimeZone.objects.all(), 
+        required=True, 
+        help_text='Choose your timezone')
+
     class Meta:
         model = User
         fields = [
@@ -26,12 +43,28 @@ class RegisterForm(UserCreationForm):
 class ProfileForm(forms.ModelForm):
     name = forms.CharField(max_length=128, required=True, help_text='Enter your name')
     email = forms.EmailField(max_length=128, required=True, help_text='Enter your email')
-    org = forms.ChoiceField(choices=Attendee.ORGS, required=True, help_text='Choose your organization')
-    timezone = forms.ChoiceField(choices=Attendee.TIMEZONES, required=True, help_text='Choose your timezone')
+    org = forms.ChoiceField(
+        choices=Organization.objects.all(), 
+        required=True, 
+        help_text='Choose your organization')
+    timezone = forms.ChoiceField(
+        choices=TimeZone.objects.all(), 
+        required=True, 
+        help_text='Choose your timezone')
+    interested_in_volunteering = forms.BooleanField(
+        required=False,
+        help_text='Please select if interested in volunteering')
+    interested_in_speaking = forms.BooleanField(
+        required=False,
+        help_text='Please check if interested in speaking')
+
+
     class Meta:
         model = Attendee
         fields = [
             'name', 'email', 'org', 'timezone',
+            'interested_in_volunteering',
+            'interested_in_speaking'
         ]
 
 
@@ -50,12 +83,19 @@ class SpeakerForm(forms.ModelForm):
 
 
 class PaperForm(forms.ModelForm):
-    paper_type = forms.ChoiceField(choices=Paper.PAPER_TYPES, required=True, help_text='Choose presentation type')
+    paper_type = forms.ChoiceField(
+        choices=PaperType.objects.all(), 
+        required=True, 
+        help_text='Choose presentation type')
     title = forms.CharField(max_length=128, required=True, help_text='Enter title for your presentation')
     abstract = forms.CharField(
         widget=forms.Textarea,
         required=True, 
         help_text='Enter abstract for presentation (suggested max 500 words)')
+    themes = forms.ModelMultipleChoiceField(
+        queryset=PaperTheme.objects.all(),
+        required=True,
+        help_text='Choose one or more themes for your paper')
     keywords = forms.CharField(max_length=128, help_text='Enter keywords for presentation')
     author_choices = Attendee.objects.exclude(name__exact='')
     primary_author = forms.ModelChoiceField(
@@ -72,20 +112,29 @@ class PaperForm(forms.ModelForm):
     class Meta:
         model = Paper
         fields = [
-            "paper_type", "title", "abstract", "keywords", 
+            "paper_type", "title", "abstract", 
+            'themes', "keywords", 
             "primary_author", "co_authors"
         ]
 
 
 class ReviewForm(forms.ModelForm):
     paper_choices = Paper.objects.all()
-    score = forms.ChoiceField(choices=Review.SCORES, 
-        required=True, help_text='Enter review score')
+    decision = forms.ChoiceField(
+        choices=ReviewScore.objects.all(), 
+        required=True, 
+        help_text='Enter review score')
+    reason_if_rejected = forms.ChoiceField(
+        choices=RejectionReason.objects.all(),
+        required=False,
+        help_text='Reasons for rejection (if rejected)')
     comments = forms.CharField(widget=forms.Textarea, 
         required=False, help_text='Enter review comments (optional)')
 
     class Meta:
         model = Review
         fields = [
-            'score', 'comments'
+            'decision', 
+            'reason_if_rejected',
+            'comments'
         ]
