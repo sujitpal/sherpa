@@ -8,13 +8,18 @@ Dashboard for {{ logged_in_user }}
 <div class="container">
     <h1>Dashboard for {{ logged_in_user }}</h1>
     <hr/>
-    <h3>Profile</h3>
+    <h3>Useful Links</h3>
     <ul>
-        <li><a href="/attendee/profile">Update profile</a></li>
+        <li><a href="/attendee/profile">Update my profile information</a></li>
+        <li>Who else is going? (<a href="/attendees">attendee list</a>&nbsp;|&nbsp;<a href="/attendee_stats">attendee summary</a>)</li>
         <li><a href="/paper/new">Submit a paper</a></li>
         {% if has_accepted_papers %}
         <li><a href="/attendee/speaker/update">Update Speaker Bio</a></li>
         {% endif %}
+        {% if logged_in_user.is_organizer %}
+        <li><a href="/papers">All Submitted Papers</a></li>
+        {% endif %}
+        <li><a href="/submissions">Paper Submission Statisics</a></li>
     </ul>
     <h3>Submitted papers</h3>
     <table class="table table-bordered">
@@ -24,6 +29,7 @@ Dashboard for {{ logged_in_user }}
                 <th>Title / Abstract / Keywords</th>
                 <th>Author(s)</th>
                 <th>Accepted?</th>
+                <th>Confirmed?</th>
             </tr>
         </thead>
         {% for paper in my_submitted_papers %}
@@ -32,6 +38,14 @@ Dashboard for {{ logged_in_user }}
                 <td>
                     <b><a href="/paper/{{ paper.id }}/update">{{ paper.title }}</a></b>
                     <p>{{ paper.abstract }}</p>
+                    <p>
+                        <B>Themes</B>
+                        <ul>
+                        {% for theme in paper.themes.all %}
+                            <li>{{ theme }}</li>
+                        {% endfor %}
+                        </ul>
+                    </p>
                     <p><b>Keywords: </b>{{ paper.keywords }}</p>
                 </td>
                 <td>
@@ -45,6 +59,14 @@ Dashboard for {{ logged_in_user }}
                     <span style="color: green;"><i class="fas fa-check"></i></span>
                     {% else %}
                     <!-- <span style="color: red;"><i class="fas fa-times"></i></span> -->
+                    <span style="color: black;"><i class="fas fa-lock"></i></span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if paper.accept_speaker_invite %}
+                    <span style="color: green;"><i class="fas fa-check"></i></span>
+                    {% else %}
+                    <!-- <span style='color:red;'><i class="far fa-calendar-check"></i></span> -->
                     <span style="color: black;"><i class="fas fa-lock"></i></span>
                     {% endif %}
                 </td>
@@ -84,7 +106,5 @@ Dashboard for {{ logged_in_user }}
             </tbody>
         </table>
     {% endif %}
-    <hr/>
-    <a href="/attendees">Back to Attendee List</a>
 </div>
 {% endblock %}

@@ -5,6 +5,8 @@
 {% block content %}
 <h3>Submitted Papers (total {{ num_papers }})</h3>
 
+<p><a href="/dashboard">Back to Dasboard</a></p>
+
 <table class="table table-bordered">
     <thead>
       <tr>
@@ -12,7 +14,7 @@
         <th>Paper Type</th>
         <th>Primary Author</th>
         <th>Title/Abstract/Keywords</th>
-        <th>Delete?</th>
+        <th>Edit?</th>
       </tr>
     </thead>
     <tbody>
@@ -21,12 +23,8 @@
             <td>{{ paper.submitted_at|date:'Y-m-d' }}</td>
             <td>{{ paper.paper_type }}</td>
             <td>{{ paper.primary_author }}</td>
-            <td>
-                <b><a href="/paper/{{ paper.id }}/update">{{ paper.title }}</a></b>
-                <p>{{ paper.abstract }}</p>
-                <p><b>Keywords:</b>{{ paper.keywords }}</p>
-            </td>
-            <td><a href="/paper/{{ paper.id }}/delete"><span style="color:red;"><i class="fa fa-trash" aria-hidden="true"></i></span></a></td>
+            <td><a href="/paper/{{ paper.id }}">{{ paper.title}}</a></td>
+            <td><a href="/paper/{{ paper.id }}/update"><span style="color:black;"><i class="fas fa-edit" aria-hidden="true"></i></span></a></td>
         </tr>
     {% endfor %}
     </tbody>

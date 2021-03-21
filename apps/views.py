@@ -269,19 +269,22 @@ def paperRetrievePage(request, pk):
     paper = get_object_or_404(Paper, pk=pk)
     # TODO: paper is visible to general public only if accepted, otherwise
     # to organizer and author / co-authors of paper
-    if not paper.is_accepted:
+    if not request.user.is_authenticated:
         return redirect('index')
-    paper_coauthors = ", ".join([ca.name for ca in paper.co_authors.all()])
-    themes = PaperTheme.objects.filter(paper=paper)
-    paper.themes.set(themes)
-    context = {
-        "paper": paper,
-        'paper_themes': themes,
-        "paper_author": paper.primary_author.name,
-        "paper_coauthors": paper_coauthors,
-        "logged_in_user": _get_logged_in_user(request)
-    }
-    return render(request, 'apps/paper.html', context)
+    if request.user.attendee.is_organizer or paper.is_accepted:
+        paper_coauthors = ", ".join([ca.name for ca in paper.co_authors.all()])
+        themes = PaperTheme.objects.filter(paper=paper)
+        paper.themes.set(themes)
+        context = {
+            "paper": paper,
+            'paper_themes': themes,
+            "paper_author": paper.primary_author.name,
+            "paper_coauthors": paper_coauthors,
+            "logged_in_user": _get_logged_in_user(request)
+        }
+        return render(request, 'apps/paper.html', context)
+    else:
+        return redirect('index')
 
 
 def paperUpdatePage(request, pk):
