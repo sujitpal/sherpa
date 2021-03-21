@@ -2,6 +2,7 @@ import operator
 from plotly.offline import plot
 import plotly.graph_objs as go
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -16,6 +17,7 @@ from .forms import (
     ProfileForm,
     SpeakerForm,
     PaperForm, 
+    PaperAcceptedForm,
     ReviewForm
 )
 from .models import (
@@ -162,7 +164,7 @@ def signInPage(request):
 
 def signOutPage(request):
     logout(request)
-    return redirect('index')
+    return redirect(settings.SUMMIT_HOME_PAGE)
 
 
 def attendeeListPage(request):
@@ -330,6 +332,25 @@ def paperListPage(request):
         "logged_in_user": _get_logged_in_user(request)
     }
     return render(request, 'apps/papers.html', context)
+
+
+def paperAcceptedPage(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('index')
+    paper = get_object_or_404(Paper, pk=pk)
+    if request.POST:
+        form = PaperAcceptedForm(request.POST, instance=paper)
+        if form.is_valid():
+            form.save()
+        return redirect('index')
+    else:
+        form = PaperAcceptedForm(data=model_to_dict(paper))
+        context = {
+            'paper': paper,
+            'paper_form': form,
+            'logged_in_user': _get_logged_in_user(request)
+        }
+        return render(request, 'apps/paper_accept.html', context)
 
 
 def reviewCreatePage(request, pk):

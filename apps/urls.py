@@ -14,6 +14,7 @@ from .views import (
     paperUpdatePage,
     paperDeletePage,
     paperListPage,
+    paperAcceptedPage,
     reviewCreatePage,
     reviewUpdatePage,
     reviewRetrievePage,
@@ -37,6 +38,7 @@ urlpatterns = [
     path('paper/<int:pk>/delete', paperDeletePage, name='paper_delete'),
     path('paper/<int:pk>', paperRetrievePage, name='paper_retrieve'),
     path('papers/', paperListPage, name='paper_list'),
+    path('paper/<int:pk>/accept', paperAcceptedPage, name='paper_accept'),
     # reviews
     path('review/<int:pk>/new', reviewCreatePage, name='review_create'),
     path('review/<int:pk>/update', reviewUpdatePage, name='review_update'),

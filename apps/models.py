@@ -94,6 +94,7 @@ class Paper(models.Model):
     # speaker to fill in after paper accepted
     accept_speaker_invite = models.BooleanField(default=False)
     extra_long_paper = models.BooleanField(default=False)
+    publish_abstract_in_ssrn = models.BooleanField(default=False)
     publish_full_paper_in_ssrn = models.BooleanField(default=False)
     # updated by admin for conference schedule
     scheduled_at = models.DateTimeField(default=datetime.now, blank=True)

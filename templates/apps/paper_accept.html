@@ -1,0 +1,33 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}
+Speaker Acceptance Form for {{ logged_in_user }}
+{% endblock %}
+
+{% block content %}
+<h3>Speaker Acceptance Form</h3>
+<p><span style='color:red;'><b>Congratulations!</b></span></p>
+<p>Your <b>{{ paper.paper_type}}</b> proposal <b>{{ paper.title }}</b> has been accepted for the search summit.</p>
+<p>Please confirm the details below.</p>
+<hr/>
+<form method="POST" enctype="multipart/form-data">   
+    {% csrf_token %} 
+    <table>
+        {% for field in paper_form %}
+            <tr valign="top">
+                <td><b>{{ field.label_tag }}</b></td>
+                <td>{{ field }}</td>
+                <td>
+                    {% if field.help_text %}
+                        <small style='color:gray;'>{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <small style='color:red;'>{{ error }}</small>
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <button type="submit" class="btn btn-success">Accept</button>
+</form>
+{% endblock %}

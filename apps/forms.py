@@ -99,6 +99,29 @@ class SpeakerForm(forms.ModelForm):
         ]
 
 
+class PaperAcceptedForm(forms.ModelForm):
+    accept_speaker_invite = forms.BooleanField(
+        required=False,
+        help_text='Check box to accept speaking opportunity (must accept to present at summit)')
+    extra_long_paper = forms.BooleanField(
+        required=False,
+        help_text='Check box if you need more time for your presentation (no guarantees but we will try our best to accomodate)')
+    publish_abstract_in_ssrn = forms.BooleanField(
+        required=False,
+        help_text='Check box if you agree to publish your abstract in SSRN')
+    publish_full_paper_in_ssrn = forms.BooleanField(
+        required=False,
+        help_text='Check box if you want to publish full paper in SSRN')
+    class Meta:
+        model = Paper
+        fields = [
+            'accept_speaker_invite',
+            'extra_long_paper',
+            'publish_abstract_in_ssrn',
+            'publish_full_paper_in_ssrn'
+        ]
+
+
 class PaperForm(forms.ModelForm):
     paper_type = forms.ModelChoiceField(
         queryset=PaperType.objects.all(), 

@@ -130,3 +130,6 @@ MEDIA_ROOT = str(BASE_DIR / 'media')
 # https://simpleisbetterthancomplex.com/tutorial/2016/06/13/how-to-send-email.html
 # First used for password reset (https://simpleisbetterthancomplex.com/tutorial/2016/09/19/how-to-create-password-reset-view.html)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Summit Home page from which we are called
+SUMMIT_HOME_PAGE = 'https://reedelsevier.sharepoint.com/sites/SearchSummit'
