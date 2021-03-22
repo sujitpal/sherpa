@@ -3,7 +3,7 @@
 {% block title %}Sign In{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container col-md-8 offset-md-4">
     <h3>Sign In</h3>
     <form method="POST" class="form-group">
         {% csrf_token %}
@@ -27,4 +27,6 @@
         {% endif %}
     </form>
 </div>
+<p class="text-center">Don't have an account? <a href="/signup">Sign Up</a></p>
+<p class="text-center"><a href="/password_reset">Forgot Password?</a></p>
 {% endblock %} 

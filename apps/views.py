@@ -138,7 +138,7 @@ def signUpPage(request):
             # authenticate and login
             user = authenticate(username=email_address, password=password)
             login(request, user)
-            return redirect('index')
+            return redirect('dashboard')
         else:
             context["signup_form"] = form
     else:
@@ -149,14 +149,14 @@ def signUpPage(request):
 
 def signInPage(request):
     if request.user.is_authenticated:
-        return redirect('index')
+        return redirect('dashboard')
     if request.POST:
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('index')
+            return redirect('dashboard')
         else:
             messages.error(request, 'Error: Wrong Username and/or Password!')
     return render(request, 'apps/signin.html')
@@ -164,7 +164,7 @@ def signInPage(request):
 
 def signOutPage(request):
     logout(request)
-    return redirect(settings.SUMMIT_HOME_PAGE)
+    return redirect('sign_in')
 
 
 def attendeeListPage(request):
@@ -188,12 +188,12 @@ def attendeeListPage(request):
 
 def attendeeProfilePage(request):
     if not request.user.is_authenticated:
-        return redirect('index')
+        return redirect('sign_in')
     if request.POST:
         form = ProfileForm(request.POST, instance=request.user.attendee)
         if form.is_valid():
             form.save()
-        return redirect('index')
+        return redirect('dashboard')
     else:
         initial_data = {
             'name': request.user.attendee.name,
@@ -213,16 +213,16 @@ def attendeeProfilePage(request):
 
 def attendeeSpeakerUpdatePage(request):
     if not request.user.is_authenticated:
-        return redirect('index')
+        return redirect('sign_in')
     if not _is_speaker(request.user.attendee):
-        return redirect('index')
+        return redirect('dashboard')
     if request.POST:
         form = SpeakerForm(request.POST, instance=request.user.attendee)
         speaker_bio = form.cleaned_data.get("speaker_bio")
         print("speaker bio:", speaker_bio)
         if form.is_valid():
             form.save()
-        return redirect('index')
+        return redirect('dashboard')
     else:
         initial_data = {
             'speaker_bio': request.user.attendee.speaker_bio,
@@ -239,7 +239,7 @@ def attendeeSpeakerUpdatePage(request):
 def attendeeSpeakerViewPage(request, pk):
     speaker = get_object_or_404(Attendee, pk=pk)
     if not _is_speaker(speaker):
-        return redirect('index')
+        return redirect('dashboard')
     context = {
         "speaker": speaker,
         "logged_in_user": _get_logged_in_user(request)
@@ -249,13 +249,13 @@ def attendeeSpeakerViewPage(request, pk):
 
 def paperCreatePage(request):
     if not request.user.is_authenticated:
-        return redirect('index')
+        return redirect('sign_in')
     if request.POST:
         form = PaperForm(request.POST)
         form.primary_author = requpdateuest.user.attendee
         if form.is_valid():
             form.save()
-        return redirect('index')
+        return redirect('dashboard')
     else:
         form = PaperForm()
         context = {
@@ -270,7 +270,7 @@ def paperRetrievePage(request, pk):
     # TODO: paper is visible to general public only if accepted, otherwise
     # to organizer and author / co-authors of paper
     if not request.user.is_authenticated:
-        return redirect('index')
+        return redirect('sign_in')
     if request.user.attendee.is_organizer or paper.is_accepted:
         paper_coauthors = ", ".join([ca.name for ca in paper.co_authors.all()])
         themes = PaperTheme.objects.filter(paper=paper)
@@ -284,18 +284,18 @@ def paperRetrievePage(request, pk):
         }
         return render(request, 'apps/paper.html', context)
     else:
-        return redirect('index')
+        return redirect('dashboard')
 
 
 def paperUpdatePage(request, pk):
     if not request.user.is_authenticated:
-        return redirect('index')
+        return redirect('sign_in')
     paper = get_object_or_404(Paper, pk=pk)
     if request.POST:
         form = PaperForm(request.POST, instance=paper)
         if form.is_valid():
             form.save()
-        return redirect('index')
+        return redirect('dashboard')
     else:
         form = PaperForm(data=model_to_dict(paper))
         context = {
@@ -306,19 +306,21 @@ def paperUpdatePage(request, pk):
 
 
 def paperDeletePage(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('sign_in')
     context = {}
     paper = get_object_or_404(Paper, pk=pk)
     if request.POST:
         paper.delete()
-        return redirect('index')
+        return redirect('dashboard')
     return render(request, 'apps/paper_delete.html', context)
 
 
 def paperListPage(request):
     if not request.user.is_authenticated:
-        return redirect('index')
+        return redirect('sign_in')
     if not request.user.attendee.is_organizer:
-        return redirect('index')
+        return redirect('dashboard')
     paper_list = Paper.objects.all()
     num_papers = paper_list.count()
     page = request.GET.get('page', 1)
@@ -339,13 +341,13 @@ def paperListPage(request):
 
 def paperAcceptedPage(request, pk):
     if not request.user.is_authenticated:
-        return redirect('index')
+        return redirect('sign_in')
     paper = get_object_or_404(Paper, pk=pk)
     if request.POST:
         form = PaperAcceptedForm(request.POST, instance=paper)
         if form.is_valid():
             form.save()
-        return redirect('index')
+        return redirect('dashboard')
     else:
         form = PaperAcceptedForm(data=model_to_dict(paper))
         context = {
@@ -358,9 +360,9 @@ def paperAcceptedPage(request, pk):
 
 def reviewCreatePage(request, pk):
     if not request.user.is_authenticated:
-        return redirect('index')
+        return redirect('sign_in')
     if not request.user.attendee.is_reviewer:
-        return redirect('index')
+        return redirect('dashboard')
     paper = get_object_or_404(Paper, pk=pk)
     if request.POST:
         form = ReviewForm(request.POST)
@@ -369,7 +371,7 @@ def reviewCreatePage(request, pk):
             review_form.reviewer = request.user.attendee
             review_form.paper = paper
             review_form.save()
-        return redirect('index')
+        return redirect('dashboard')
     else:
         init_data = {
             "reviewer": request.user.attendee,
@@ -386,9 +388,9 @@ def reviewCreatePage(request, pk):
 
 def reviewRetrievePage(request, pk):
     if not request.user.is_authenticated:
-        return redirect('index')
+        return redirect('sign_in')
     if not request.user.attendee.is_reviewer:
-        return redirect('index')
+        return redirect('dashboard')
     paper = get_object_or_404(Paper, pk=pk)
     review = Review.objects.get(paper=paper, reviewer=request.user.attendee)
     star_rating = range(review.decision.review_score)
@@ -402,16 +404,16 @@ def reviewRetrievePage(request, pk):
 
 def reviewUpdatePage(request, pk):
     if not request.user.is_authenticated:
-        return redirect('index')
+        return redirect('sign_in')
     if not request.user.attendee.is_reviewer:
-        return redirect('index')
+        return redirect('dashboard')
     paper = get_object_or_404(Paper, pk=pk)
     review = Review.objects.get(paper=paper, reviewer=request.user.attendee)
     if request.POST:
         form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
             form.save()
-        return redirect('index')
+        return redirect('dashboard')
     else:
         review_form = ReviewForm(data=model_to_dict(review))
         context = {
@@ -424,7 +426,7 @@ def reviewUpdatePage(request, pk):
 
 def dashboardPage(request):
     if not request.user.is_authenticated:
-        return redirect('index')
+        return redirect('sign_in')
     context = {}
     logged_in_user = request.user.attendee
     context['logged_in_user'] = _get_logged_in_user(request)
