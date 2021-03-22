@@ -455,20 +455,27 @@ def dashboardPage(request):
 
 
 def submissionStatsPage(request):
-    papers_by_type = (Paper.objects.all()
-        .values('paper_type')
-        .annotate(total=Count('paper_type'))
-        .order_by('total'))
-    papers_by_type = _convert_to_value_counts(papers_by_type, 'paper_type')
+    papers_by_type = [p.paper_type.paper_type_name 
+        for p in Paper.objects.all()]
+    papers_by_type = _convert_to_freq_table(papers_by_type)
     papers_by_type_totals = _sum_value_counts(papers_by_type)
     papers_by_type_pie = _generate_pie_chart(papers_by_type, 'Papers by Paper Type')
 
-    paper_author_orgs = [p.primary_author.org for p in Paper.objects.all()]
+    paper_author_orgs = [p.primary_author.org.org_name 
+        for p in Paper.objects.all()]
     papers_by_org = _convert_to_freq_table(paper_author_orgs)
     papers_by_org_totals = _sum_value_counts(papers_by_org)
     papers_by_org_pie = _generate_pie_chart(papers_by_org, 'Papers by Organization')
 
-    paper_author_tzs = [p.primary_author.timezone for p in Paper.objects.all()]
+    papers_by_theme = []
+    for p in Paper.objects.all():
+        papers_by_theme.extend([theme.paper_theme for theme in p.themes.all()])
+    papers_by_theme = _convert_to_freq_table(papers_by_theme)
+    papers_by_theme_totals = _sum_value_counts(papers_by_theme)
+    papers_by_theme_pie = _generate_pie_chart(papers_by_theme, 'Papers by Theme')
+
+    paper_author_tzs = [p.primary_author.timezone.utc_offset 
+        for p in Paper.objects.all()]
     papers_by_tz = _convert_to_freq_table(paper_author_tzs)
     papers_by_tz_totals = _sum_value_counts(papers_by_tz)
     papers_by_tz_pie = _generate_pie_chart(papers_by_tz, 'Papers by Timezone')
@@ -480,6 +487,9 @@ def submissionStatsPage(request):
         'papers_by_org': papers_by_org,
         'papers_by_org_totals': papers_by_org_totals,
         'papers_by_org_pie': papers_by_org_pie,
+        'papers_by_theme': papers_by_theme,
+        'papers_by_theme_totals': papers_by_theme_totals,
+        'papers_by_theme_pie': papers_by_theme_pie,
         'papers_by_tz': papers_by_tz,
         'papers_by_tz_totals': papers_by_tz_totals,
         'papers_by_tz_pie': papers_by_tz_pie,

@@ -64,6 +64,34 @@ Paper Submission Statistics
             </td>
         </tr>
     </table>
+    <h3>By Theme</h3>
+    <table>
+        <tr>
+            <td width="75%">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Theme</th>
+                        <th>Number of Papers</th>
+                    </tr>
+                    {% for theme, num_papers in papers_by_theme %}
+                    <tr>
+                        <td>{{ theme }}</td>
+                        <td>{{ num_papers }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <th>Total</th>
+                        <th>{{ papers_by_theme_totals }}</th>
+                    </tr>
+                </table>
+            </td>
+            <td width="25%">
+                <div style="width:600;height:500">
+                    {{ papers_by_theme_pie|safe }}
+                </div>
+            </td>
+        </tr>
+    </table>
     <h3>By Timezone</h3>
     <table>
         <tr>
