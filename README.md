@@ -17,4 +17,4 @@ The webapp is currently not tied together because it serves as the dynamic backe
 * Load reference data: `python manage.py shell` and once in the shell.
   * `>>> import load_reference_data`
   * `>>> quit()`
-
+* Make a folder to store speaker images: `mkdir -p media/avatars`.

@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.auth.models import User
@@ -21,6 +23,12 @@ class TimeZone(models.Model):
         return self.utc_offset
 
 
+def _content_file_name(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "speaker_{:d}.{:s}".format(instance.id, ext)
+    return os.path.join('avatars', filename)
+    
+
 class Attendee(models.Model):
     # gets filled on initial signup
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -34,10 +42,9 @@ class Attendee(models.Model):
         null=True, on_delete=models.CASCADE)
     interested_in_volunteering = models.BooleanField(default=False)
     interested_in_speaking = models.BooleanField(default=False)
-
     # gets filled only when paper accepted
     speaker_bio = models.TextField(blank=True)
-    speaker_avatar = models.FileField(upload_to='avatars', blank=True)
+    speaker_avatar = models.ImageField(upload_to=_content_file_name, blank=True)
     # gets filled automatically (always true)
     is_attendee = models.BooleanField(default=True)
     # gets filled at different stages by admin

@@ -1,0 +1,67 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}Accepted Papers List{% endblock %}
+
+{% block content %}
+<h3>Accepted Papers (total {{ num_papers }})</h3>
+
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Submitted</th>
+        <th>Paper Type</th>
+        <th>Primary Author</th>
+        <th>Paper Title</th>
+        <th>Speaker Confirmed?</th>
+        <th>Edit</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for paper in papers %}
+        <tr>
+            <td>{{ paper.submitted_at|date:'Y-m-d' }}</td>
+            <td>{{ paper.paper_type }}</td>
+            <td>
+              {% if paper.primary_author.speaker_bio %}
+                <a href="/attendee/speaker/{{ paper.primary_author.id }}">{{ paper.primary_author }}</a>
+              {% else %}
+                {{ paper.primary_author }}
+              {% endif %}
+            </td>
+            <td><a href="/paper/{{ paper.id }}">{{ paper.title}}</a></td>
+            <td>
+              {% if paper.accept_speaker_invite %}
+              <span style="color: green;"><i class="fas fa-check"></i></span>
+              {% else %}
+              <span style="color: red;"><i class="fas fa-times"></i></span>
+              {% endif %}
+            </td>
+            <td><a href="/paper/{{ paper.id }}/update"><span style="color:black;"><i class="fas fa-edit" aria-hidden="true"></i></span></a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  
+  {% if papers.has_other_pages %}
+    <ul class="pagination">
+      {% if papers.has_previous %}
+        <li><a href="?page={{ papers.previous_page_number }}">&laquo;</a></li>
+      {% else %}
+        <li class="disabled"><span>&laquo;</span></li>
+      {% endif %}
+      {% for i in papers.paginator.page_range %}
+        {% if papers.number == i %}
+          <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+        {% else %}
+          <li><a href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if attendees.has_next %}
+        <li><a href="?page={{ papers.next_page_number }}">&raquo;</a></li>
+      {% else %}
+        <li class="disabled"><span>&raquo;</span></li>
+      {% endif %}
+    </ul>
+  {% endif %}
+  
+{% endblock %}

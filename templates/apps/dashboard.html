@@ -16,11 +16,18 @@ Dashboard for {{ logged_in_user }}
         {% if has_accepted_papers %}
         <li><a href="/attendee/speaker/update">Update Speaker Bio</a></li>
         {% endif %}
-        {% if logged_in_user.is_organizer %}
-        <li><a href="/papers">All Submitted Papers</a></li>
-        {% endif %}
         <li><a href="/paper/stats">Paper Submission Statisics</a></li>
     </ul>
+
+    {% if logged_in_user.is_organizer %}
+    <h3>Organizer Links</h3>
+    <ul>
+        <li><a href="/papers">Submitted Papers</a></li>
+        <li><a href="/papers/accepted">Accepted Papers</a></li>
+    </ul>
+    {% endif %}
+
+    {% if has_submitted_papers %}
     <h3>Submitted papers</h3>
     <table class="table table-bordered">
         <thead>
@@ -74,6 +81,8 @@ Dashboard for {{ logged_in_user }}
         {% endfor %}
         <tbody>
     </table>
+    {% endif %}
+
     {% if my_review_tasks %}
         <h3>Papers to Review</h3>
         <table class="table table-bordered">
