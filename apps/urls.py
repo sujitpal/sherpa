@@ -19,7 +19,7 @@ from .views import (
     reviewUpdatePage,
     reviewRetrievePage,
     dashboardPage,
-    submissionStatsPage,
+    paperStatsPage,
 )
 
 urlpatterns = [
@@ -45,6 +45,6 @@ urlpatterns = [
     path('review/<int:pk>', reviewRetrievePage, name='review_retrieve'),
     # dashboard
     path('dashboard/', dashboardPage, name='dashboard'),
-    # submission stats
-    path("submissions/", submissionStatsPage, name='submission-stats'),
+    # stats
+    path("paper/stats", paperStatsPage, name='paper_stats'),
 ]

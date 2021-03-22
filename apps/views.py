@@ -454,7 +454,7 @@ def dashboardPage(request):
     return render(request, 'apps/dashboard.html', context)
 
 
-def submissionStatsPage(request):
+def paperStatsPage(request):
     papers_by_type = [p.paper_type.paper_type_name 
         for p in Paper.objects.all()]
     papers_by_type = _convert_to_freq_table(papers_by_type)
@@ -495,7 +495,7 @@ def submissionStatsPage(request):
         'papers_by_tz_pie': papers_by_tz_pie,
         'logged_in_user': _get_logged_in_user(request)
     }
-    return render(request, 'apps/submit_stats.html', context)
+    return render(request, 'apps/paper_stats.html', context)
 
 
 
