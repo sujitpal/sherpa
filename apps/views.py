@@ -31,6 +31,7 @@ from .models import (
     Review
 )
 
+
 def _is_speaker(attendee):
     # check if attendee has any papers that are accepted
     num_papers_accepted = Paper.objects.filter(
@@ -99,13 +100,14 @@ def _generate_pie_chart(value_counts, chart_title):
 # Create your views here.
 
 def indexPage(request):
-    # This page should never be visible, replace all redirect('index')
-    # calls to redirect('user_portal') defined below
-    context = {}
-    if request.user.is_authenticated:
-        context["logged_in_user"] = _get_logged_in_user(request)
-    return render(request, 'apps/index.html', context)
-
+    # # This page should never be visible, replace all redirect('index')
+    # # calls to redirect('user_portal') defined below
+    # context = {}
+    # if request.user.is_authenticated:
+    #     context["logged_in_user"] = _get_logged_in_user(request)
+    # return render(request, 'apps/index.html', context)
+    return redirect('dashboard')
+    
 
 def signUpPage(request):
     context = {}
@@ -497,5 +499,27 @@ def paperStatsPage(request):
     }
     return render(request, 'apps/paper_stats.html', context)
 
+
+def attendeeStatsPage(request):
+    attendees_by_org = [a.org.org_name for a in Attendee.objects.exclude(name__exact='')]
+    attendees_by_org = _convert_to_freq_table(attendees_by_org)
+    attendees_by_org_total = _sum_value_counts(attendees_by_org)
+    attendees_by_org_pie = _generate_pie_chart(attendees_by_org, 'Attendees by Organization')
+
+    attendees_by_tz = [a.timezone.utc_offset for a in Attendee.objects.exclude(name__exact='')]
+    attendees_by_tz = _convert_to_freq_table(attendees_by_tz)
+    attendees_by_tz_total = _sum_value_counts(attendees_by_tz)
+    attendees_by_tz_pie = _generate_pie_chart(attendees_by_tz, 'Attendees by Timezone')
+
+    context = {
+        'attendees_by_org': attendees_by_org,
+        'attendees_by_org_total': attendees_by_org_total,
+        'attendees_by_org_pie': attendees_by_org_pie,
+        'attendees_by_tz': attendees_by_tz,
+        'attendees_by_tz_total': attendees_by_tz_total,
+        'attendees_by_tz_pie': attendees_by_tz_pie,
+        'logged_in_user': _get_logged_in_user(request)
+    }
+    return render(request, 'apps/attendee_stats.html', context)
 
 
