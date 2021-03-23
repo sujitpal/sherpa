@@ -14,11 +14,13 @@ ORG_NAMES = [
     'RELX',
     'External'
 ]
+Organization.objects.all().delete()
 for org_name in ORG_NAMES:
     org = Organization.objects.create(org_name=org_name)
 
 
 UTC_OFFSETS = ['UTC{:+d}'.format(i) for i in range(-12, 12, 1)]
+TimeZone.objects.all().delete()
 for utc_offset in UTC_OFFSETS:
     tz = TimeZone.objects.create(utc_offset=utc_offset)
 
@@ -29,6 +31,7 @@ PAPER_TYPES = [
     'Workshop',
     'Poster'
 ]
+PaperType.objects.all().delete()
 for paper_type_name in PAPER_TYPES:
     pt = PaperType.objects.create(paper_type_name=paper_type_name)
 
@@ -42,6 +45,7 @@ PAPER_THEMES = [
     'Techniques applied to Search',
     'Search Infrastructure'
 ]
+PaperTheme.objects.all().delete()
 for paper_theme in PAPER_THEMES:
     pt = PaperTheme.objects.create(paper_theme=paper_theme)
 
@@ -53,6 +57,7 @@ REViEW_SCORES = [
     (2, 'Maybe Accept'),
     (1, 'Reject')
 ]
+ReviewScore.objects.all().delete()
 for score, decision in REViEW_SCORES:
     rs = ReviewScore.objects.create(review_score=score, review_decision=decision)
 
@@ -63,5 +68,7 @@ REJECT_REASONS = [
     'Consider Poster',
     'Other'
 ]
+RejectionReason.objects.all().delete()
 for reject_reason in REJECT_REASONS:
     rr = RejectionReason.objects.create(reject_reason=reject_reason)
+

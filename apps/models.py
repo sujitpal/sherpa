@@ -78,7 +78,7 @@ class PaperType(models.Model):
 
 
 class PaperTheme(models.Model):
-    paper_theme = models.CharField(max_length=32, blank=False)
+    paper_theme = models.CharField(max_length=64, blank=False)
 
     def __str__(self):
         return self.paper_theme
