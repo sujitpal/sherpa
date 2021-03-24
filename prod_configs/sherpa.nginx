@@ -1,0 +1,13 @@
+server {
+	listen 80;
+	server_name __SERVER_IP__;
+
+	location = /favicon.ico { access_log off; log_not_found off; }
+	location /static/ {
+		root /home/ubuntu/sherpa;
+	}
+	location / {
+		include proxy_params;
+		proxy_pass http://unix:/home/ubuntu/sherpa/sherpa.sock;
+	}
+}
