@@ -25,11 +25,7 @@ SECRET_KEY = '1k_p^gn_e3rni(2%9-a8af1rzhb7_%&q()ewk^^&l_f^sn*s!u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# TODO: DEV
 ALLOWED_HOSTS = []
-# TODO: PROD
-ALLOWED_HOSTS = [ 'IP ADDRESS GOES HERE' ]
-
 
 # Application definition
 
@@ -77,24 +73,12 @@ WSGI_APPLICATION = 'sherpa.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-# TODO: DEV
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-# TODO: PROD
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#        'NAME': 'sherpa_db',
-#        'USER': 'django',
-#        'PASSWORD': 'sherpa',
-#        'HOST': 'localhost',
-#        'PORT': ''
-#    }
-#}
 
 
 # Password validation
@@ -134,6 +118,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/Users/palsujit/projects/sherpa/static2'
 STATICFILES_DIRS = [str(BASE_DIR / 'static')]
 
 # File uploads (https://simpleisbetterthancomplex.com/tutorial/2016/08/01/how-to-upload-files-with-django.html)
