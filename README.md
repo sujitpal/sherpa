@@ -50,69 +50,76 @@ ALTER ROLE
 postgres=# alter role django set timezone to 'utc';
 ALTER ROLE
 postgres=# grant all privileges on database sherpa_db to django;
+GRANT
 postgres=# \q
 postgres@ip-10-169-23-250:~$ exit
 logout
-GRANT
+$
 ```
 
-git clone the application
+### Email Backend
 
-Install libraries listed in requirements.txt using pip3
+I needed to set up an additional Gmail email id under my account and set up an application key. This application key needs to be updated into the `prod_config/settings.py` file (see next point for details). Instructions were adapted from the article [How to send mail with Django and Gmail in production the right way](https://dev.to/abderrahmanemustapha/how-to-send-email-with-django-and-gmail-in-production-the-right-way-24ab).
 
-Update sherpa/settings.py as indicated with TODO: PROD and TODO: DEV comments
+### Download and setup Application
 
+* Git clone application (using https): `git clone https://github.com/sujitpal/sherpa.git`
+* Install libraries listed in requirements.txt using `pip3`. Most instructions ask you to `pip3 install psycopg2` but that requires gcc and compiling and failed for the couple of times I tried it, but `psycopg2-binary` is precompiled and works great.
+```
+pip3 install django
+pip3 install django-plotly-dash
+pip3 install Pillow
+pip3 install psycopg2-binary
+```
+* Update production files in `prod_configs` folder with appropriate values for placeholder apps (they look like `__PLACEHOLDER__`)
+* Copy the production settings.py file: `cp prod_configs/settings.py sherpa/settings.py`
+* Apply database changes and set up admin user.
+```
 $ python3 manage.py makemigrations
 $ python3 manage.py migrate
 $ python3 manage.py createsuperuser
+```
+* Load reference data
+```
 $ python3 manage.py shell
 >>> import load_reference_data
 >>> quit()
+```
 
-Rather than compile PostgreSQL driver psycopg2 from source, `pip install psycopg2-binary`, works fine for Ubuntu 20.04.
+### Running under gunicorn
 
-## Running under gunicorn
-
-$ sudo apt install gunicorn
-(base) ubuntu@ip-10-169-23-99:~/sherpa$ sudo /home/ubuntu/anaconda3/bin/gunicorn -b 10.169.23.99:80 sherpa.wsgi
-
-gunicorn -w4 -b 0.0.0.0:8080 sherpa.wsgi
-
-sudo cp gunicorn.service /etc/systemd/system/
-
+* Download gunicorn using apt: `sudo apt install gunicorn`
+* Check that the command works (this is the gunicorn equivalent of `python3 manage.py runserver`), so idea is to forward port 8080 and see if the application comes up on the browser: `gunicorn -w4 -b 0.0.0.0:8080 sherpa.wsgi`
+* We want to run gunicorn as a daemon, so copy the provided .service file to the appropriate location: `sudo cp prod_configs/gunicorn.service /etc/systemd/system/`
+* Start gunicorn daemon and enable automatic restart across system reboots.
+```
 sudo systemctl start gunicorn
 sudo systemctl enable gunicorn
+```
+* Check status of gunicorn: `sudo systemctl status gunicorn` and verify that the Unix socket file is created in local directory: `ls -l sherpa.sock`.
+* You can paginate through gunicorn logs using `sudo journalctl -u gunicorn`
+* If you need to make changes to the gunicorn.service file, then you need to `sudo systemctl daemon-reload` and restart (next point).
+* If you change the application and need to see changes show up, you need to `sudo systemctl restart gunicorn`
 
-sudo systemctl status gunicorn
-ls -l sherpa.sock
+### Setting up Nginx reverse proxy
 
-// logs
-sudo journalctl -u gunicorn
+Instructions for this were adapted from [this DigitalOcean article](https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04).
 
-// restart gunicorn
-sudo systemctl daemon-reload   // if made changes to service file
-sudo systemctl restart gunicorn
+* Install nginx: `sudo apt install nginx`
+* Copy configuration for app: `cp sherpa.nginx /etc/nginx/sites-available/sherpa`
+* Validate configuration: `sudo nginx -t`
+* Restart nginx: `sudo systemctl restart nginx`
+* Add rule for Nginx to firewall: `sudo ufw allow 'Nginx Full'`
 
+### CSS visibility in Application and Admin pages
 
-sudo apt install nginx
-cp sherpa.nginx /etc/nginx/sites-available/sherpa
+Admin pages are messed up because the CSS for the admin pages are packaged in the Django contrib library and not directly accessible as files, so Nginx cannot see them. To fix this, we need to merge the admin and application CSS on our Dev environment and push it up to the Prod environment. Instructions are adapted from [Django documentation on Deploying static files](https://docs.djangoproject.com/en/3.1/howto/static-files/deployment/).
 
-// validate configuration
-sudo nginx -t
-
-sudo systemctl restart nginx
-sudo ufw allow 'Nginx Full'
-
-https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-16-04
-
-
--- email
-https://dev.to/abderrahmanemustapha/how-to-send-email-with-django-and-gmail-in-production-the-right-way-24ab
-
--- collectstatic
-
-set STATIC_ROOT in settings.py (temporarily)
-python manage.py collectstatic
-copy output into $PROJECT_HOME/static (replacing current)
-https://docs.djangoproject.com/en/3.1/howto/static-files/deployment/
-
+* Set STATIC_ROOT=/full/path/to/project/static2 in settings.py (temporarily). This is a new sibling directory that will be generated and pushed to the prod environment, then deleted.
+* Merge application and admin CSS files __on Dev environment__ using: `python manage.py collectstatic`
+* Tar the `static2` folder and push to production: `tar cvzf static2.tar.gz static2/*`
+* Untar __on Prod environment__ and overwrite the static subdirectory.
+```
+$ tar xvf static2.tar.gz
+$ mv static static0; mv static2 static; rm -rf static0
+```
