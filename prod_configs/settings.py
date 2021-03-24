@@ -25,7 +25,7 @@ SECRET_KEY = '1k_p^gn_e3rni(2%9-a8af1rzhb7_%&q()ewk^^&l_f^sn*s!u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [ 'localhost', '__SERVER_IP__' ]
+ALLOWED_HOSTS = [ 'localhost', __SERVER_IP__ ]
 
 
 # Application definition
@@ -130,9 +130,9 @@ MEDIA_ROOT = str(BASE_DIR / 'media')
 # https://simpleisbetterthancomplex.com/tutorial/2016/06/13/how-to-send-email.html
 # First used for password reset (https://simpleisbetterthancomplex.com/tutorial/2016/09/19/how-to-create-password-reset-view.html)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'sherpa.summit2021@gmail.com'
-EMAIL_HOST_PASSWORD = '__GMAIL_APP_PASSWORD__'
+EMAIL_HOST = __EMAIL_HOST__
+EMAIL_HOST_USER = __EMAIL_HOST_USER__
+EMAIL_HOST_PASSWORD = __GMAIL_APP_PASSWORD__
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Sherpa Summit 2021'
