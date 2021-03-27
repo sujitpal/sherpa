@@ -276,12 +276,16 @@ def paperCreatePage(request):
         return redirect('sign_in')
     if request.POST:
         form = PaperForm(request.POST)
-        form.primary_author = requpdateuest.user.attendee
         if form.is_valid():
             form.save()
         return redirect('dashboard')
     else:
-        form = PaperForm()
+        form = PaperForm(initial={
+            'primary_author': request.user.attendee.id,
+        })
+        form.fields['co_authors'].queryset = (Attendee.objects
+            .exclude(name__exact='')
+            .exclude(id=request.user.attendee.id))
         context = {
             'paper_form': form,
             'logged_in_user': _get_logged_in_user(request)
