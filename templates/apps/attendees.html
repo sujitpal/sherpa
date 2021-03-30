@@ -8,6 +8,7 @@
 <table class="table table-bordered">
     <thead>
       <tr>
+        <th>#</th>
         <th>Name</th>
         <th>Email</th>
         <th>Organization</th>
@@ -19,6 +20,7 @@
     <tbody>
     {% for attendee in attendees %}
         <tr>
+            <td>{{ attendee.id|add:"-1" }}</td>
             <td>{{ attendee.name }}</td>
             <td>{{ attendee.email }}</td>
             <td>{{ attendee.org }}</td>
