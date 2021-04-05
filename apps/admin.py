@@ -10,6 +10,7 @@ from .models import (
     ReviewScore,
     RejectionReason,
     Review,
+    Event,
 )
 
 # Register your models here.
@@ -22,3 +23,4 @@ admin.site.register(Paper)
 admin.site.register(ReviewScore)
 admin.site.register(RejectionReason)
 admin.site.register(Review)
+admin.site.register(Event)

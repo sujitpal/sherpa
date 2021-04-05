@@ -5,6 +5,7 @@ from apps.models import (
     PaperTheme,
     RejectionReason,
     ReviewScore,
+    Event
 )
 
 ORG_NAMES = [
@@ -72,3 +73,19 @@ RejectionReason.objects.all().delete()
 for reject_reason in REJECT_REASONS:
     rr = RejectionReason.objects.create(reject_reason=reject_reason)
 
+
+EVENT_NAMES = [
+    (0,  "Signup"),
+	(10, "Call for papers"),
+	(20, "Review papers"),
+	(30, "Paper acceptances sent"),
+	(40, "Paper acceptances confirmed"),
+	(50, "Schedule created"),
+	(60, "Conference"),
+	(70, "SSRN submit")
+]
+Event.objects.all().delete()
+for event_seq, event_name in EVENT_NAMES:
+    is_current = True if event_seq == 0 else False
+    ev = Event.objects.create(
+        event_seq=event_seq, event_name=event_name, is_current=is_current)

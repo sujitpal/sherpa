@@ -11,8 +11,14 @@ Speaker Bio for {{ speaker }}
     <table>
         <tr>
             <td valign="top">
+                {% if speaker.speaker_avatar %}
                 <img src="{{ speaker.speaker_avatar.url }}" 
                     alt="Speaker Image" width="250" height="250">
+                {% else %}
+                <img src="http://getdrawings.com/img/generic-person-silhouette-7.png" 
+                    alt="Generic Speaker Image"
+                    width="250" height="250"/></a>
+                {% endif %}
             </td>
             <td>
                 <p><b>Name: </b>{{ speaker.name }}</p>

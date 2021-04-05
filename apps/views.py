@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template.defaulttags import register
@@ -28,14 +28,15 @@ from .models import (
     PaperTheme,
     Paper, 
     ReviewScore,
-    Review
+    Review,
+    Event,
 )
 
 
 def _is_speaker(attendee):
     # check if attendee has any papers that are accepted
     num_papers_accepted = Paper.objects.filter(
-        primary_author__exact=attendee,
+        Q(primary_author__exact=attendee) | Q(co_authors__id=attendee.id),
         is_accepted=True).count()
     return num_papers_accepted > 0
 
@@ -95,6 +96,13 @@ def _generate_pie_chart(value_counts, chart_title):
     fig.add_trace(pie)
     plt_div = plot(fig, output_type='div', include_plotlyjs=False)
     return plt_div
+
+
+def _get_current_event():
+    return (Event.objects.filter(is_current=True)
+        .order_by('-event_seq')
+        .first()
+        .event_seq)
 
 
 # Create your views here.
@@ -295,11 +303,14 @@ def paperCreatePage(request):
 
 def paperRetrievePage(request, pk):
     paper = get_object_or_404(Paper, pk=pk)
-    # TODO: paper is visible to general public only if accepted, otherwise
-    # to organizer and author / co-authors of paper
-    if not request.user.is_authenticated:
-        return redirect('sign_in')
-    if request.user.attendee.is_organizer or paper.is_accepted:
+    # if user is author or co-author, they should be able to access
+    # if user is organizer then they should be able to access
+    # once paper is accepted, everyone should be able to access
+    if ((request.user.is_authenticated and (
+            request.user.attendee == paper.primary_author or 
+            request.user.attendee in paper.co_authors.all() or 
+            request.user.attendee.is_organizer)) or 
+            paper.is_accepted):
         paper_coauthors = ", ".join([ca.name for ca in paper.co_authors.all()])
         themes = PaperTheme.objects.filter(paper=paper)
         paper.themes.set(themes)
@@ -525,8 +536,7 @@ def dashboardPage(request):
     context = {}
     logged_in_user = request.user.attendee
     context['logged_in_user'] = _get_logged_in_user(request)
-    # update profile: /attendee/<logged_in_user.id>/update
-    # TODO: need update attendee view
+    context["current_event"] = _get_current_event()
     # my papers
     my_papers = Paper.objects.filter(primary_author__exact=logged_in_user.id)
     if len(my_papers) > 0:

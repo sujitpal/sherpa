@@ -144,3 +144,12 @@ class Review(models.Model):
 
     def __str__(self):
         return "{:s} / {:s}".format(self.reviewer.name, self.paper.title)
+
+
+class Event(models.Model):
+    event_seq = models.IntegerField(default=0)
+    event_name = models.CharField(max_length=128, blank=False)
+    is_current = models.BooleanField(default=False)
+
+    def __str__(self):
+        return "{:s} ({:d})".format(self.event_name, self.event_seq)
