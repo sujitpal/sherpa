@@ -436,7 +436,8 @@ def paperStatsPage(request):
         'papers_by_tz': papers_by_tz,
         'papers_by_tz_totals': papers_by_tz_totals,
         'papers_by_tz_pie': papers_by_tz_pie,
-        'logged_in_user': _get_logged_in_user(request)
+        'logged_in_user': _get_logged_in_user(request),
+        'current_event': _get_current_event()
     }
     return render(request, 'apps/paper_stats.html', context)
 

@@ -7,6 +7,15 @@ Paper Submission Statistics
 {% block content %}
 <div class="container">
     <h1>Paper Submission Statistics</h1>
+
+    {% if current_event > 40 %}
+    <p>
+        <div class="float-right">
+          <a href="/papers"><i class="fas fa-list"></i>&nbsp;List&nbsp;</a>
+        </div>
+    </p>
+    {% endif %}
+
     <hr/>
     <h3>By Paper Type</h3>
     <table>

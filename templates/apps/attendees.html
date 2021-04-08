@@ -5,6 +5,12 @@
 {% block content %}
 <h3>List of Attendees (total {{ num_attendees }})</h3>
 
+<p>
+  <div class="float-right">
+    <a href="/attendee/stats"><i class="fas fa-chart-bar"></i>&nbsp;Summary&nbsp;</a>
+  </div>
+</p>
+
 <table class="table table-bordered">
     <thead>
       <tr>
@@ -47,21 +53,23 @@
   {% if attendees.has_other_pages %}
     <ul class="pagination">
       {% if attendees.has_previous %}
-        <li><a href="?page={{ attendees.previous_page_number }}">&laquo;</a></li>
+        <li><a href="?page={{ attendees.previous_page_number }}"><i class="fas fa-arrow-alt-circle-left"></i></a></li>
       {% else %}
-        <li class="disabled"><span>&laquo;</span></li>
+        <li class="disabled"><span><i class="fas fa-arrow-alt-circle-left"></i></span></li>
       {% endif %}
       {% for i in attendees.paginator.page_range %}
+        &nbsp;
         {% if attendees.number == i %}
           <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
         {% else %}
           <li><a href="?page={{ i }}">{{ i }}</a></li>
         {% endif %}
+        &nbsp;
       {% endfor %}
       {% if attendees.has_next %}
-        <li><a href="?page={{ attendees.next_page_number }}">&raquo;</a></li>
+        <li><a href="?page={{ attendees.next_page_number }}"><i class="fas fa-arrow-alt-circle-right"></i></a></li>
       {% else %}
-        <li class="disabled"><span>&raquo;</span></li>
+        <li class="disabled"><span><i class="fas fa-arrow-alt-circle-right"></i></span></li>
       {% endif %}
     </ul>
   {% endif %}
