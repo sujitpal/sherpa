@@ -15,12 +15,12 @@ Attendee Statistics
                 <table class="table table-bordered">
                     <tr>
                         <th>Organization</th>
-                        <th>Number of Papers</th>
+                        <th>Number of Attendees</th>
                     </tr>
-                    {% for org, num_papers in attendees_by_org %}
+                    {% for org, num_attendees in attendees_by_org %}
                     <tr>
                         <td>{{ org }}</td>
-                        <td>{{ num_papers }}</td>
+                        <td>{{ num_attendees }}</td>
                     </tr>
                     {% endfor %}
                     <tr>
@@ -43,12 +43,12 @@ Attendee Statistics
                 <table class="table table-bordered">
                     <tr>
                         <th>Timezone</th>
-                        <th>Number of Papers</th>
+                        <th>Number of Attendees</th>
                     </tr>
-                    {% for timezone, num_papers in attendees_by_tz %}
+                    {% for timezone, num_attendees in attendees_by_tz %}
                     <tr>
                         <td>{{ timezone }}</td>
-                        <td>{{ num_papers }}</td>
+                        <td>{{ num_attendees }}</td>
                     </tr>
                     {% endfor %}
                     <tr>
