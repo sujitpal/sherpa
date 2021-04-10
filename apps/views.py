@@ -62,21 +62,19 @@ def _get_star_rating(review_score):
     return star_rating
 
 
-def _convert_to_value_counts(list_of_dicts, key):
-    value_counts = []
-    for dict_entry in list_of_dicts:
-        value_counts.append((dict_entry[key], dict_entry['total']))
-    return value_counts
-
-
-def _convert_to_freq_table(values):
+def _convert_to_freq_table(values, keys=[], utc_sort=False):
     freqs = {}
+    if len(keys) > 0:
+        freqs = {k:0 for k in keys}
     for val in values:
         if val in freqs.keys():
             freqs[val] += 1
         else:
             freqs[val] = 1
-    value_counts = sorted(freqs.items(), key=operator.itemgetter(1))
+    if utc_sort:
+        value_counts = sorted(freqs.items(), key=lambda k: int(k[0].replace("UTC", "")))
+    else:
+        value_counts = sorted(freqs.items(), key=operator.itemgetter(0))
     return value_counts
 
 
@@ -94,6 +92,22 @@ def _generate_pie_chart(value_counts, chart_title):
         width=300, height=300,
         margin=dict(l=50, r=50, b=50, t=50, pad=4))
     fig.add_trace(pie)
+    plt_div = plot(fig, output_type='div', include_plotlyjs=False)
+    return plt_div
+
+
+def _generate_bar_chart(value_counts, chart_title):
+    values = [vc[0] for vc in value_counts]
+    counts = [vc[1] for vc in value_counts]
+    fig = go.Figure()
+    bar = go.Bar(x=counts, y=values,
+        showlegend=False, name=chart_title,
+        orientation='h')
+    fig.update_layout(autosize=False,
+        width=300, height=600,
+        margin=dict(l=50, r=50, b=50, t=50, pad=4),
+        template='plotly_white')
+    fig.add_trace(bar)
     plt_div = plot(fig, output_type='div', include_plotlyjs=False)
     return plt_div
 
@@ -263,17 +277,18 @@ def attendeeStatsPage(request):
     attendees_by_org_pie = _generate_pie_chart(attendees_by_org, 'Attendees by Organization')
 
     attendees_by_tz = [a.timezone.utc_offset for a in Attendee.objects.exclude(name__exact='')]
-    attendees_by_tz = _convert_to_freq_table(attendees_by_tz)
+    all_tzs = [tz.utc_offset for tz in TimeZone.objects.all()]
+    attendees_by_tz = _convert_to_freq_table(attendees_by_tz, keys=all_tzs, utc_sort=True)
     attendees_by_tz_total = _sum_value_counts(attendees_by_tz)
-    attendees_by_tz_pie = _generate_pie_chart(attendees_by_tz, 'Attendees by Timezone')
+    attendees_by_tz_bar = _generate_bar_chart(attendees_by_tz, 'Attendees by Timezone')
 
     context = {
         'attendees_by_org': attendees_by_org,
         'attendees_by_org_total': attendees_by_org_total,
         'attendees_by_org_pie': attendees_by_org_pie,
-        'attendees_by_tz': attendees_by_tz,
+        'attendees_by_tz': filter(lambda x: x[1] > 0, attendees_by_tz),
         'attendees_by_tz_total': attendees_by_tz_total,
-        'attendees_by_tz_pie': attendees_by_tz_pie,
+        'attendees_by_tz_bar': attendees_by_tz_bar,
         'logged_in_user': _get_logged_in_user(request)
     }
     return render(request, 'apps/attendee_stats.html', context)
@@ -419,9 +434,10 @@ def paperStatsPage(request):
 
     paper_author_tzs = [p.primary_author.timezone.utc_offset 
         for p in Paper.objects.all()]
-    papers_by_tz = _convert_to_freq_table(paper_author_tzs)
+    all_tzs = [tz.utc_offset for tz in TimeZone.objects.all()]
+    papers_by_tz = _convert_to_freq_table(paper_author_tzs, keys=all_tzs, utc_sort=True)
     papers_by_tz_totals = _sum_value_counts(papers_by_tz)
-    papers_by_tz_pie = _generate_pie_chart(papers_by_tz, 'Papers by Timezone')
+    papers_by_tz_bar = _generate_bar_chart(papers_by_tz, 'Papers by Timezone')
 
     context = {
         'papers_by_type': papers_by_type,
@@ -435,7 +451,7 @@ def paperStatsPage(request):
         'papers_by_theme_pie': papers_by_theme_pie,
         'papers_by_tz': papers_by_tz,
         'papers_by_tz_totals': papers_by_tz_totals,
-        'papers_by_tz_pie': papers_by_tz_pie,
+        'papers_by_tz_bar': papers_by_tz_bar,
         'logged_in_user': _get_logged_in_user(request),
         'current_event': _get_current_event()
     }
