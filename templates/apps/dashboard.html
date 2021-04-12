@@ -14,9 +14,9 @@ Dashboard for {{ logged_in_user }}
         <li>Who else is going? (<a href="/attendees">attendee list</a>&nbsp;|&nbsp;<a href="/attendee/stats">attendee summary</a>)</li>
         {% if current_event >= 10 %}
             {% if current_event < 20 %}
-            <li><a href="/paper/new">Submit a paper</a></li>
+            <li><a href="/paper/new">Submit an abstract for your presentation</a></li>
             {% endif %}
-            <li><a href="/paper/stats">Paper Submission Statisics</a></li>
+            <li><a href="/paper/stats">Abstract Submission Statisics</a></li>
         {% endif %}
         {% if has_accepted_papers %}
             {% if current_event >= 20 %}
