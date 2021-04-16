@@ -9,11 +9,12 @@ from apps.models import (
 )
 
 ORG_NAMES = [
-    'LexisNexis',
+    'LexisNexis Legal & Professional',
+    'LexisNexis Risk Solutions Group',
     'Elsevier',
     'Exhibitions',
     'RELX',
-    'External'
+    'External',
 ]
 Organization.objects.all().delete()
 for org_name in ORG_NAMES:

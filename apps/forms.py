@@ -25,7 +25,7 @@ class RegisterForm(UserCreationForm):
         required=True, 
         help_text='Enter your email')
     org = forms.ModelChoiceField(
-        queryset=Organization.objects.all(), 
+        queryset=Organization.objects.all().order_by("org_name"), 
         required=True, 
         help_text='Choose your organization')
     timezone = forms.ModelChoiceField(
@@ -63,7 +63,7 @@ class ProfileForm(forms.ModelForm):
         required=True, 
         help_text='Enter your email')
     org = forms.ModelChoiceField(
-        queryset=Organization.objects.all(), 
+        queryset=Organization.objects.all().order_by("org_name"), 
         required=True, 
         help_text='Choose your organization')
     timezone = forms.ModelChoiceField(
