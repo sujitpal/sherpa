@@ -50,7 +50,7 @@ Dashboard for {{ logged_in_user }}
                     {% else %}
                     <b><a href="/paper/{{ paper.id }}">{{ paper.title }}</a></b>
                     {% endif %}
-                    <p>{{ paper.abstract }}</p>
+                    <p>{{ paper.abstract|linebreaks }}</p>
                     <p>
                         <B>Themes</B>
                         <ul>
