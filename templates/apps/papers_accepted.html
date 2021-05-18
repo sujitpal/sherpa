@@ -26,6 +26,9 @@
                 <a href="/attendee/speaker/{{ paper.primary_author.id }}">{{ paper.primary_author }}</a>
               {% else %}
                 {{ paper.primary_author }}
+                {% for co_author in paper.co_authors.all %}
+                  , {{ co_author }}
+                {% endfor %}
               {% endif %}
             </td>
             <td><a href="/paper/{{ paper.id }}">{{ paper.title}}</a></td>

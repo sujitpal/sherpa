@@ -15,7 +15,7 @@
     </tr>
     <tr valign="top">
         <td><b>Abstract:</b></td>
-        <td>{{ paper.abstract }}</td>
+        <td>{{ paper.abstract|linebreaks }}</td>
     </tr>
     <tr valign="top">
         <td><b>Themes:</b></td>
@@ -34,8 +34,10 @@
     <tr valign="top">
         <td><b>Authors:</b></td>
         <td>
-            {{ paper_author }}
-            {% if paper_coauthors %}, {{ paper_coauthors }}{% endif %}
+            {{ paper.primary_author }}
+            {% for co_author in paper.co_authors.all %}
+            , {{ co_author }}
+            {% endfor %}
         </td>
     </tr>
 </table>

@@ -26,7 +26,12 @@
         <tr>
             <td>{{ paper.submitted_at|date:'Y-m-d' }}</td>
             <td>{{ paper.paper_type }}</td>
-            <td>{{ paper.primary_author }}</td>
+            <td>
+              {{ paper.primary_author }}
+              {% for co_author in paper.co_authors.all %}
+                , {{ co_author }}
+              {% endfor %}
+            </td>
             <td><a href="/paper/{{ paper.id }}">{{ paper.title}}</a></td>
             <td><a href="/paper/{{ paper.id }}/update"><span style="color:black;"><i class="fas fa-edit" aria-hidden="true"></i></span></a></td>
         </tr>

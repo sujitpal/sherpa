@@ -63,9 +63,9 @@ Dashboard for {{ logged_in_user }}
                 </td>
                 <td>
                     {{ paper.primary_author }}
-                    {% if paper.coauthors %}
-                    , {{ paper.coauthors }}
-                    {% endif %}
+                    {% for co_author in paper.co_authors.all %}
+                        , {{ co_author }}
+                    {% endfor %}
                 </td>
                 <td>
                     {% if current_event < 30 %}
