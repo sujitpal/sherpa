@@ -147,22 +147,26 @@ def signUpPage(request):
             volunteer_interest = form.cleaned_data.get('interested_in_volunteering')
             speaking_interest = form.cleaned_data.get('interested_in_speaking')
             user.username = email_address
-            user.save()
-            user.email = email_address
-            if not user.attendee:
-                user.attendee = Attendee.objects.get(user=user)
-            user.attendee.name = name
-            user.attendee.email = email_address
-            user.attendee.org = org
-            user.attendee.timezone = timezone
-            user.attendee.interested_in_volunteering = volunteer_interest
-            user.attendee.interested_in_speaking = speaking_interest
-            user.attendee.save()
-            user.save()
-            # authenticate and login
-            user = authenticate(username=email_address, password=password)
-            login(request, user)
-            return redirect('dashboard')
+            try:
+                user.save()
+                user.email = email_address
+                if not user.attendee:
+                    user.attendee = Attendee.objects.get(user=user)
+                user.attendee.name = name
+                user.attendee.email = email_address
+                user.attendee.org = org
+                user.attendee.timezone = timezone
+                user.attendee.interested_in_volunteering = volunteer_interest
+                user.attendee.interested_in_speaking = speaking_interest
+                user.save()
+                user.attendee.save()
+                # authenticate and login
+                user = authenticate(username=email_address, password=password)
+                login(request, user)
+                return redirect('dashboard')
+            except Exception:
+                form.add_error('email_address', "Email Address already registered!")
+                context["signup_form"] = form
         else:
             context["signup_form"] = form
     else:
