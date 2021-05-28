@@ -15,6 +15,7 @@ from .models import (
     Review
 )
 
+
 class RegisterForm(UserCreationForm):
     name = forms.CharField(
         max_length=128, 
@@ -92,6 +93,7 @@ class SpeakerForm(forms.ModelForm):
         help_text='Enter speaker bio (suggested max 250 words)'
     )
     speaker_avatar = forms.FileField()
+
     class Meta:
         model = Attendee
         fields = [ 
@@ -112,6 +114,7 @@ class PaperAcceptedForm(forms.ModelForm):
     publish_full_paper_in_ssrn = forms.BooleanField(
         required=False,
         help_text='Check box if you want to publish full paper in SSRN')
+
     class Meta:
         model = Paper
         fields = [
@@ -139,8 +142,13 @@ class PaperForm(forms.ModelForm):
         queryset=PaperTheme.objects.all(),
         required=True,
         help_text='Choose one or more themes for your paper')
-    keywords = forms.CharField(max_length=128, help_text='Enter keywords for presentation')
-    author_choices = Attendee.objects.exclude(name__exact='')
+    keywords = forms.CharField(
+        max_length=128,
+        help_text='Enter keywords for presentation')
+    author_choices = (
+        Attendee.objects.exclude(name__exact='')
+        .order_by('name')
+    )
     primary_author = forms.ModelChoiceField(
         queryset=author_choices,
         required=True,
@@ -149,7 +157,9 @@ class PaperForm(forms.ModelForm):
     co_authors = forms.ModelMultipleChoiceField(
         queryset=author_choices,
         required=False,
-        help_text='Add your co-authors, if any'
+        help_text='Add your co-authors, if any. Mac users select multiple'
+                  'authors by holding down [Cmd] while selecting with mouse.'
+                  'PC/Linux users hold down [Ctrl] while selecting with mouse.'
     )
 
     class Meta:
@@ -171,7 +181,8 @@ class ReviewForm(forms.ModelForm):
         queryset=RejectionReason.objects.all(),
         required=False,
         help_text='Reasons for rejection (if rejected)')
-    comments = forms.CharField(widget=forms.Textarea, 
+    comments = forms.CharField(
+        widget=forms.Textarea, 
         required=False, help_text='Enter review comments (optional)')
 
     class Meta:

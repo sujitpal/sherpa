@@ -555,12 +555,17 @@ def dashboardPage(request):
     context['logged_in_user'] = _get_logged_in_user(request)
     context["current_event"] = _get_current_event()
     # my papers
-    my_papers = Paper.objects.filter(primary_author__exact=logged_in_user.id)
+    my_papers = (
+        Paper.objects.
+        filter(primary_author__exact=logged_in_user.id).
+        order_by('title')
+    )
     if len(my_papers) > 0:
         context['has_submitted_papers'] = True
         context['my_submitted_papers'] = my_papers
         # check if user has accepted papers
-        has_accepted_papers = len([paper for paper in my_papers if paper.is_accepted]) > 0
+        has_accepted_papers = len([paper for paper in my_papers
+                                   if paper.is_accepted]) > 0
         context["has_accepted_papers"] = has_accepted_papers
     # my review tasks
     if logged_in_user.is_reviewer:
@@ -573,7 +578,8 @@ def dashboardPage(request):
                 my_review_tasks.append((paper, True))
             else:
                 my_review_tasks.append((paper, False))
-        context['my_review_tasks'] = my_review_tasks
+        context['my_review_tasks'] = sorted(my_review_tasks,
+                                            key=lambda x: x[0].title)
     # full list of papers
     return render(request, 'apps/dashboard.html', context)
 
