@@ -358,7 +358,8 @@ def paperUpdatePage(request, pk):
         form = PaperForm(data=model_to_dict(paper))
         context = {
             "paper_id": paper.id,
-            "paper_form": form
+            "paper_form": form,
+            "logged_in_user": _get_logged_in_user(request)
         }
         return render(request, 'apps/paper_update.html', context)
 
