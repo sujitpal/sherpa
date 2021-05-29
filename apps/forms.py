@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import widgets
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -156,6 +157,7 @@ class PaperForm(forms.ModelForm):
     )
     co_authors = forms.ModelMultipleChoiceField(
         queryset=author_choices,
+        widget=widgets.SelectMultiple(attrs={'size': 20}),
         required=False,
         help_text='Add your co-authors, if any. Mac users select multiple'
                   'authors by holding down [Cmd] while selecting with mouse.'
