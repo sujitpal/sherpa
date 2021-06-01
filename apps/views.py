@@ -492,6 +492,7 @@ def reviewCreatePage(request, pk):
     if not request.user.attendee.is_reviewer:
         return redirect('dashboard')
     paper = get_object_or_404(Paper, pk=pk)
+    paper_themes = "; ".join([pt.paper_theme for pt in paper.themes.all()])
     if request.POST:
         form = ReviewForm(request.POST)
         if form.is_valid():
@@ -503,7 +504,8 @@ def reviewCreatePage(request, pk):
     else:
         init_data = {
             "reviewer": request.user.attendee,
-            "paper": paper
+            "paper": paper,
+            "paper_themes": paper_themes
         }
         form = ReviewForm(initial=init_data)
         context = {
@@ -520,10 +522,12 @@ def reviewRetrievePage(request, pk):
     if not request.user.attendee.is_reviewer:
         return redirect('dashboard')
     paper = get_object_or_404(Paper, pk=pk)
+    paper_themes = "; ".join([pt.paper_theme for pt in paper.themes.all()])
     review = Review.objects.get(paper=paper, reviewer=request.user.attendee)
     star_rating = range(review.decision.review_score)
     context = { 
         "review": review,
+        "paper_themes": paper_themes,
         "logged_in_user": _get_logged_in_user(request),
         "star_rating": star_rating
     }
@@ -536,6 +540,7 @@ def reviewUpdatePage(request, pk):
     if not request.user.attendee.is_reviewer:
         return redirect('dashboard')
     paper = get_object_or_404(Paper, pk=pk)
+    paper_themes = "; ".join([pt.paper_theme for pt in paper.themes.all()])
     review = Review.objects.get(paper=paper, reviewer=request.user.attendee)
     if request.POST:
         form = ReviewForm(request.POST, instance=review)
@@ -546,6 +551,7 @@ def reviewUpdatePage(request, pk):
         review_form = ReviewForm(data=model_to_dict(review))
         context = {
             "review": review,
+            "paper_themes": paper_themes,
             "review_form": review_form,
             "logged_in_user": request.user.attendee
         }
@@ -587,5 +593,4 @@ def dashboardPage(request):
                                             key=lambda x: x[0].title)
     # full list of papers
     return render(request, 'apps/dashboard.html', context)
-
 
