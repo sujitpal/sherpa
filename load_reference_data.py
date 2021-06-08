@@ -53,7 +53,7 @@ for paper_theme in PAPER_THEMES:
 
 
 REViEW_SCORES = [
-    (0, 'Not Reviewed'),
+    (0, 'Abstain'),
     (4, 'Strong Accept'),
     (3, 'Accept'),
     (2, 'Maybe Accept'),
