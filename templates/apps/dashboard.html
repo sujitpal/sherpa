@@ -113,14 +113,18 @@ Dashboard for {{ logged_in_user }}
                 </tr>
             </thead>
             <tbody>
-            {% for paper, is_reviewed in my_review_tasks %}
+            {% for paper, is_reviewed, star_rating in my_review_tasks %}
                 <tr>
                     {% if is_reviewed %}
                     <td>
                         <a href="/review/{{ paper.id }}/update">{{ paper.title }} ({{ paper.paper_type }})</a>
                     </td>
                     <td>
-                        <span style="color: green;"><i class="fas fa-check"></i></span>
+                        <span style="color: gold; white-space: nowrap">
+                        {% for i in star_rating %}
+                            <i class="fas fa-star"></i>
+                        {% endfor %}
+                        </span>
                     </td>
                     {% else %}
                     <td>

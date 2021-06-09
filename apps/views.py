@@ -48,17 +48,12 @@ def _get_logged_in_user(request):
     return logged_in_user
 
 
-def _get_star_rating(review_score):
-    if review_score == "Strong Accept":
-        star_rating = 4
-    elif review_score == "Accept":
-        star_rating = 3
-    elif review_score == "Maybe Accept":
-        star_rating = 2
-    elif review_score == "Reject":
-        star_rating = 1
-    else:
-        star_rating = 0
+def _get_star_rating(paper, user):
+    review = Review.objects.filter(reviewer__exact=user,
+                                   paper__exact=paper.id).first()
+    star_rating = 0
+    if review is not None:
+        star_rating = review.decision.review_score
     return star_rating
 
 
@@ -586,9 +581,10 @@ def dashboardPage(request):
         reviewed_papers = set([r.paper.id for r in my_reviews])
         for paper in all_papers:
             if paper.id in reviewed_papers:
-                my_review_tasks.append((paper, True))
+                star_rating = _get_star_rating(paper, logged_in_user)
+                my_review_tasks.append((paper, True, range(star_rating)))
             else:
-                my_review_tasks.append((paper, False))
+                my_review_tasks.append((paper, False, None))
         context['my_review_tasks'] = sorted(my_review_tasks,
                                             key=lambda x: x[0].title)
     # full list of papers
