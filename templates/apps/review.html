@@ -3,8 +3,7 @@
 {% block title %}Review Details{% endblock %}
 
 {% block content %}
-<h3>Review Details</h3>
-
+<h3>Review</h3>
 <table>
     <tr valign="top">
         <td><b>Reviewer:</b></td>
@@ -12,10 +11,16 @@
         <td></td>
     </tr>
     <tr valign="top">
-        <td><b>Paper Title:</b></td>
+        <td><b>Title:</b></td>
         <td>{{ review.paper.title }}</td>
         <td></td>
     </tr>
+    <tr valign="top">
+        <td><b>Format:</b></td>
+        <td>{{ review.paper.paper_type.paper_type_name }}</td>
+        <td></td>
+    </tr>
+
     <tr valign="top">
         <td><b>Abstract:</b></td>
         <td>{{ review.paper.abstract|linebreaks }}</td>

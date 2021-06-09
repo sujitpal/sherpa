@@ -3,7 +3,7 @@
 {% block title %}New Review{% endblock %}
 
 {% block content %}
-<h3>New Review by {{ reviewer }}</h3>
+<h3>New Review</h3>
 <form method="POST" enctype="multipart/form-data">   
     {% csrf_token %} 
     <table>
@@ -13,8 +13,13 @@
             <td width="33%"></td>
         </tr>
         <tr valign="top">
-            <td><b>Paper Title:</b></td>
+            <td><b>Title:</b></td>
             <td>{{ init_data.paper.title }}</td>
+            <td></td>
+        </tr>
+        <tr valign="top">
+            <td><b>Format:</b></td>
+            <td>{{ init_data.paper.paper_type.paper_type_name }}</td>
             <td></td>
         </tr>
         <tr valign="top">
