@@ -123,3 +123,33 @@ Admin pages are messed up because the CSS for the admin pages are packaged in th
 $ tar xvf static2.tar.gz
 $ mv static static0; mv static2 static; rm -rf static0
 ```
+
+## Application Maintenance
+
+The application provides for multiple roles with differing access to system functionality, for example, an attendee has less access to system's functionality than an organizer. All users are required to register into the system with role "attendee". Any increases in access roles need to be set using the Django Admin console.
+
+Similarly, some functionality changes over the lifetime of the application's deployment. For example, proposal submitters can edit their submissions all the way up to the close of the Call For Papers (CFP) but should only see a read-only view thereafter. This is also controlled from the Django Admin console using Events.
+
+Setting the role for individual users (over and above the attendee role) and the global event fall under the purview of the Django administrator (the super-user).
+
+### User Role Maintenance
+
+Every user who registers is automatically assigned the role "attendee". Any roles assigned is in addition to this basic role. The other roles available are as follows:
+
+* reviewer -- individuals who review and score the presentation proposals submitted by attendees. Their dashboard will feature an additional list of papers they need to review.
+* speaker -- individuals whose presentation proposals are selected for inclusion in the conference. They will have additional links to submit their speaker profile, etc.
+* organizer -- individuals who are part of the event organizing team. These individuals will have some extra links that allow them to oversee and coordinate the work being done at each stage.
+
+### Event Maintenance
+
+The lifecycle of the conference consists of the following stages. Only one stage may be active at a time. A stage subsumes all previous stages, i.e., in most cases, functionality that was available at a previous stage will continue to be available at the current stage.
+
+* Signup -- at this point, the application will start accepting registrations from attendees (not enforced, just a base state).
+* Call for Papers -- at this stage, attendees will see a link on their dashboard to submit presentation proposals. Attendees will be able to edit and fine-tune their proposal all the way up to the close of this stage (and the beginning of the next stage).
+* Review Papers -- at this stage, presentation proposals cannot be edited, and revieweer's will see a list of papers to review. Currently, the results of the review process are collated into an Excel spreadsheet and the final rankings calculated out of the application. In the future, we may fold this functionality into the application.
+* Paper Acceptances sent -- authors of presentations that are to be presented at the conference are contacted by email.
+* Paper Acceptances confirmed -- authors of presentations confirm their availability to speak at the conference (via form in the application).
+* Schedule Created -- schedule is created for the confirmed authors. This is also currently a semi-manual process, however, the finished schedule will link back to the application to display the abstract and speaker profiles for the presentations scheduled.
+* Conference -- the conference is in motion.
+* SSRN Submissions (post conference) -- post conference, there is a form to ask speakers if they would like their abstracts to be listed in the [SSRN Journal](https://www.ssrn.com/index.cfm/en/).
+
