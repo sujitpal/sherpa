@@ -21,6 +21,8 @@ from .views import (
     reviewCreatePage,
     reviewUpdatePage,
     reviewRetrievePage,
+    reviewerStats,
+    reviewerDetail,
     dashboardPage,
 )
 
@@ -48,6 +50,10 @@ urlpatterns = [
     path('review/<int:pk>/new', reviewCreatePage, name='review_create'),
     path('review/<int:pk>/update', reviewUpdatePage, name='review_update'),
     path('review/<int:pk>', reviewRetrievePage, name='review_retrieve'),
+    path('review/<int:pk>/<int:ak>', reviewRetrievePage, name='review_retrieve'),
+    # reviewer
+    path('reviewer/stats', reviewerStats, name='reviewer_stats'),
+    path('reviewer/<int:pk>', reviewerDetail, name='reviewer_detail'),
     # dashboard
     path('dashboard/', dashboardPage, name='dashboard'),
 ]

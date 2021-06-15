@@ -4,6 +4,11 @@
 
 {% block content %}
 <h3>Review</h3>
+
+{% if ak_provided %}
+<p><a href="/reviewer/stats">Back</a></p>
+{% endif %}
+
 <table>
     <tr valign="top">
         <td><b>Reviewer:</b></td>
@@ -52,4 +57,5 @@
         <td>{{ review.comments }}</td>
     </tr>
 </table>
+
 {% endblock %}

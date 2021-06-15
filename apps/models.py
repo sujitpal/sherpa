@@ -27,7 +27,7 @@ def _content_file_name(instance, filename):
     ext = filename.split('.')[-1]
     filename = "speaker_{:d}.{:s}".format(instance.id, ext)
     return os.path.join('avatars', filename)
-    
+
 
 class Attendee(models.Model):
     # gets filled on initial signup

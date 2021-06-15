@@ -1,0 +1,26 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}
+Reviewer Statistics
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Reviewer Statistics</h1>
+
+    <table class="table table-bordered">
+        <tr>
+            <th>Reviewer Name</th>
+            <th>#-papers reviewed</th>
+            <th>%-papers reviewed</th>
+        </tr>
+        {% for reviewer, num_reviewed, pct_reviewed in review_stats %}
+        <tr>
+            <td><a href="/reviewer/{{ reviewer.id }}">{{ reviewer }}</a></td>
+            <td>{{ num_reviewed }}</td>
+            <td>{{ pct_reviewed|floatformat:-2 }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

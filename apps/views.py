@@ -511,20 +511,28 @@ def reviewCreatePage(request, pk):
         return render(request, "apps/review_create.html", context)
 
 
-def reviewRetrievePage(request, pk):
+def reviewRetrievePage(request, pk, ak=None):
     if not request.user.is_authenticated:
         return redirect('sign_in')
     if not request.user.attendee.is_reviewer:
         return redirect('dashboard')
     paper = get_object_or_404(Paper, pk=pk)
     paper_themes = "; ".join([pt.paper_theme for pt in paper.themes.all()])
-    review = Review.objects.get(paper=paper, reviewer=request.user.attendee)
+    if ak is None:
+        # this is how its called from my reviews (user is signed-in user)
+        review = Review.objects.get(paper=paper, reviewer=request.user.attendee)
+    else:
+        # this is how its called from reviewer details page, attendee key
+        # is passed in on URL
+        reviewer = get_object_or_404(Attendee, pk=ak)
+        review = Review.objects.get(paper=paper, reviewer=reviewer)
     star_rating = range(review.decision.review_score)
-    context = { 
+    context = {
         "review": review,
         "paper_themes": paper_themes,
         "logged_in_user": _get_logged_in_user(request),
-        "star_rating": star_rating
+        "star_rating": star_rating,
+        "ak_provided": True if ak is not None else False,
     }
     return render(request, 'apps/review.html', context)
 
@@ -551,6 +559,76 @@ def reviewUpdatePage(request, pk):
             "logged_in_user": request.user.attendee
         }
         return render(request, 'apps/review_update.html', context)
+
+
+def reviewerStats(request):
+    if not request.user.is_authenticated:
+        return redirect('sign_in')
+    if not request.user.attendee.is_organizer:
+        return redirect('dashboard')
+    reviewers = Attendee.objects.filter(is_reviewer=True).order_by('name')
+    num_papers = Paper.objects.all().count()
+    review_stats = []
+    for reviewer in reviewers:
+        num_reviewed = Review.objects.filter(reviewer=reviewer).count()
+        print('reviewer counts:', reviewer, num_reviewed)
+        pct_reviewed = 100 * num_reviewed / num_papers
+        review_stats.append((reviewer, num_reviewed, pct_reviewed))
+    context = {
+        "review_stats": review_stats,
+        "logged_in_user": request.user.attendee
+    }
+    return render(request, 'apps/reviewer_stats.html', context)
+
+
+def _generate_histogram(raw_scores, chart_title, nbins=4):
+    value_counts = {}
+    for v in range(1, nbins+1):
+        value_counts[v] = len([s for s in raw_scores if s == v])
+    values = [v for v, _ in value_counts.items()]
+    counts = [c for _, c in value_counts.items()]
+    fig = go.Figure()
+    bar = go.Bar(x=values, y=counts,
+                 showlegend=False, name=chart_title,
+                 orientation='v')
+    fig.update_layout(autosize=False,
+                      width=600, height=300,
+                      margin=dict(l=50, r=50, b=50, t=50, pad=4),
+                      template='plotly_white')
+    fig.update_xaxes(type='category', title_text='rating')
+    fig.update_yaxes(title_text='count')
+    fig.add_trace(bar)
+    plt_div = plot(fig, output_type='div', include_plotlyjs=False)
+    return plt_div
+
+
+def reviewerDetail(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('sign_in')
+    if not request.user.attendee.is_organizer:
+        return redirect('dashboard')
+    reviewer = get_object_or_404(Attendee, pk=pk)
+    all_papers = Paper.objects.all()
+    reviewed_papers = set([rp.paper.id for rp in
+                           Review.objects.filter(reviewer=reviewer)])
+    papers_reviewed_disp, scores = [], []
+    for paper in all_papers:
+        if paper.id in reviewed_papers:
+            star_rating = _get_star_rating(paper, reviewer)
+            papers_reviewed_disp.append((paper, True, range(star_rating)))
+            scores.append(star_rating)
+        else:
+            papers_reviewed_disp.append((paper, False, None))
+    papers_reviewed_disp = sorted(papers_reviewed_disp,
+                                  key=lambda x: x[0].title)
+    reviewer_hist = _generate_histogram(scores, reviewer.name)
+    context = {
+        "reviewer_hist": reviewer_hist,
+        "reviewer": reviewer,
+        "papers_reviewed": papers_reviewed_disp,
+        "logged_in_user": request.user.attendee
+    }
+    return render(request, 'apps/reviewer.html', context)
 
 
 def dashboardPage(request):

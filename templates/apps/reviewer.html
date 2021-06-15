@@ -1,0 +1,50 @@
+{% extends 'apps/base.html' %}
+
+{% block title %}Reviewer Details{% endblock %}
+
+{% block content %}
+<h3>Reviewer Details for {{ reviewer }}</h3>
+
+<a href="/reviewer/stats"">Back to Reviewer Statistics</a>
+
+<div class="container">
+    <div style="width:50%; margin:auto;">
+        {{ reviewer_hist|safe }}
+    </div>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Paper</th>
+                <th>Reviewed?</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for paper, is_reviewed, star_rating in papers_reviewed %}
+            <tr>
+                {% if is_reviewed %}
+                <td>
+                    <a href="/review/{{ paper.id }}/{{ reviewer.id }}">{{ paper.title }} ({{ paper.paper_type }})</a>
+                </td>
+                <td>
+                    <span style="color: gold; white-space: nowrap">
+                    {% for i in star_rating %}
+                        <i class="fas fa-star"></i>
+                    {% endfor %}
+                    </span>
+                </td>
+                {% else %}
+                <td>
+                    {{ paper.title }} ({{ paper.paper_type }})
+                </td>
+                <td>
+                    <span style="color: red;"><i class="fas fa-times"></i></span>
+                </td>
+                {% endif %}
+            </tr>
+        {% endfor %}    
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}
