@@ -581,23 +581,29 @@ def reviewerStats(request):
     return render(request, 'apps/reviewer_stats.html', context)
 
 
-def _generate_histogram(raw_scores, chart_title, nbins=4):
+def _generate_histogram(raw_scores, all_scores,
+                        chart_title, paper_count, nbins=4):
     value_counts = {}
     for v in range(1, nbins+1):
         value_counts[v] = len([s for s in raw_scores if s == v])
-    values = [v for v, _ in value_counts.items()]
-    counts = [c for _, c in value_counts.items()]
+    score_values = [v for v, _ in value_counts.items()]
+    score_counts = [(100 * c / paper_count) for _, c in value_counts.items()]
     fig = go.Figure()
-    bar = go.Bar(x=values, y=counts,
-                 showlegend=False, name=chart_title,
+    bar = go.Bar(x=score_values, y=score_counts,
+                 name=chart_title,
                  orientation='v')
+    all_values = [v for v, _ in all_scores]
+    all_counts = [c for _, c in all_scores]
+    line = go.Scatter(x=all_values, y=all_counts,
+                      name="Overall Reviews")
     fig.update_layout(autosize=False,
                       width=600, height=300,
                       margin=dict(l=50, r=50, b=50, t=50, pad=4),
                       template='plotly_white')
     fig.update_xaxes(type='category', title_text='rating')
-    fig.update_yaxes(title_text='count')
+    fig.update_yaxes(title_text='percent count')
     fig.add_trace(bar)
+    fig.add_trace(line)
     plt_div = plot(fig, output_type='div', include_plotlyjs=False)
     return plt_div
 
@@ -607,6 +613,7 @@ def reviewerDetail(request, pk):
         return redirect('sign_in')
     if not request.user.attendee.is_organizer:
         return redirect('dashboard')
+    # compute stats and list for reviewer
     reviewer = get_object_or_404(Attendee, pk=pk)
     all_papers = Paper.objects.all()
     reviewed_papers = set([rp.paper.id for rp in
@@ -621,7 +628,21 @@ def reviewerDetail(request, pk):
             papers_reviewed_disp.append((paper, False, None))
     papers_reviewed_disp = sorted(papers_reviewed_disp,
                                   key=lambda x: x[0].title)
-    reviewer_hist = _generate_histogram(scores, reviewer.name)
+    # compute stats across full set of reviews
+    num_reviews = Review.objects.count()
+    all_review_counts = (
+        Review.objects.all().exclude(decision__review_score=0)
+        .values("decision__review_score")
+        .annotate(Count("paper")))
+    norm_counts = []
+    for qs in all_review_counts:
+        norm_counts.append((
+            qs["decision__review_score"],
+            100 * qs["paper__count"] / num_reviews)
+        )
+    norm_counts = sorted(norm_counts, key=operator.itemgetter(0))
+    reviewer_hist = _generate_histogram(scores, norm_counts,
+                                        reviewer.name, len(reviewed_papers))
     context = {
         "reviewer_hist": reviewer_hist,
         "reviewer": reviewer,
