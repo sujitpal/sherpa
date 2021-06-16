@@ -142,7 +142,9 @@ Every user who registers is automatically assigned the role "attendee". Any role
 
 ### Event Maintenance
 
-The lifecycle of the conference consists of the following stages. Only one stage may be active at a time. A stage subsumes all previous stages, i.e., in most cases, functionality that was available at a previous stage will continue to be available at the current stage.
+The lifecycle of the conference consists of the following stages. Multiple stages may be active at a time, the one with the highest `event_seq` will be considered the current stage. A stage subsumes all previous stages, i.e., in most cases, functionality that was available at a previous stage will continue to be available at the current stage.
+
+To set the current stage (or current event) select the corresponding event from the Admin console and check the `is_current` checkbox for the event, then save.
 
 * Signup -- at this point, the application will start accepting registrations from attendees (not enforced, just a base state).
 * Call for Papers -- at this stage, attendees will see a link on their dashboard to submit presentation proposals. Attendees will be able to edit and fine-tune their proposal all the way up to the close of this stage (and the beginning of the next stage).
