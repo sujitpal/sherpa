@@ -105,39 +105,42 @@ Dashboard for {{ logged_in_user }}
 
     {% if my_review_tasks %}
         <h3>Papers to Review</h3>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Paper</th>
-                    <th>Reviewed?</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for paper, is_reviewed, star_rating in my_review_tasks %}
-                <tr>
-                    {% if is_reviewed %}
-                    <td>
-                        <a href="/review/{{ paper.id }}/update">{{ paper.title }} ({{ paper.paper_type }})</a>
-                    </td>
-                    <td>
-                        <span style="color: gold; white-space: nowrap">
-                        {% for i in star_rating %}
-                            <i class="fas fa-star"></i>
-                        {% endfor %}
-                        </span>
-                    </td>
-                    {% else %}
-                    <td>
-                        <a href="/review/{{ paper.id }}/new">{{ paper.title }} ({{ paper.paper_type }})</a>
-                    </td>
-                    <td>
-                        <span style="color: red;"><i class="fas fa-times"></i></span>
-                    </td>
-                    {% endif %}
-                </tr>
-            {% endfor %}    
-            </tbody>
-        </table>
+        {% for paper_type, review_tasks_by_type in my_review_tasks %}
+            <h4>{{ paper_type }}</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Paper ({{ paper_type }})</th>
+                        <th>Reviewed?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for paper, is_reviewed, star_rating in review_tasks_by_type %}
+                    <tr>
+                        {% if is_reviewed %}
+                        <td>
+                            <a href="/review/{{ paper.id }}/update">{{ paper.title }} ({{ paper.paper_type }})</a>
+                        </td>
+                        <td>
+                            <span style="color: gold; white-space: nowrap">
+                            {% for i in star_rating %}
+                                <i class="fas fa-star"></i>
+                            {% endfor %}
+                            </span>
+                        </td>
+                        {% else %}
+                        <td>
+                            <a href="/review/{{ paper.id }}/new">{{ paper.title }} ({{ paper.paper_type }})</a>
+                        </td>
+                        <td>
+                            <span style="color: red;"><i class="fas fa-times"></i></span>
+                        </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}    
+                </tbody>
+            </table>
+        {% endfor %}
     {% endif %}
 
     {% if logged_in_user.is_organizer %}

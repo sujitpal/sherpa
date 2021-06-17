@@ -1,3 +1,4 @@
+import collections
 import operator
 from plotly.offline import plot
 import plotly.graph_objs as go
@@ -674,18 +675,27 @@ def dashboardPage(request):
         context["has_accepted_papers"] = has_accepted_papers
     # my review tasks
     if logged_in_user.is_reviewer:
-        my_review_tasks = []
+        my_review_task_dict = collections.defaultdict(list)
         all_papers = Paper.objects.all()
         my_reviews = Review.objects.filter(reviewer__exact=logged_in_user.id)
         reviewed_papers = set([r.paper.id for r in my_reviews])
         for paper in all_papers:
             if paper.id in reviewed_papers:
+                paper_type = paper.paper_type.paper_type_name
                 star_rating = _get_star_rating(paper, logged_in_user)
-                my_review_tasks.append((paper, True, range(star_rating)))
+                my_review_task_dict[paper_type].append(
+                    (paper, True, range(star_rating)))
             else:
-                my_review_tasks.append((paper, False, None))
-        context['my_review_tasks'] = sorted(my_review_tasks,
-                                            key=lambda x: x[0].title)
+                my_review_task_dict[paper_type].append((paper, False, None))
+        my_review_paper_types = sorted(list(my_review_task_dict.keys()))
+        my_review_tasks = []
+        for paper_type in my_review_paper_types:
+            my_review_tasks.append((
+                paper_type, 
+                sorted(my_review_task_dict[paper_type],
+                       key=lambda x: x[0].title)))
+        context['my_review_tasks'] = my_review_tasks
+
     # full list of papers
     return render(request, 'apps/dashboard.html', context)
 
