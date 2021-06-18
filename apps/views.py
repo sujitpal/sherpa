@@ -680,8 +680,8 @@ def dashboardPage(request):
         my_reviews = Review.objects.filter(reviewer__exact=logged_in_user.id)
         reviewed_papers = set([r.paper.id for r in my_reviews])
         for paper in all_papers:
+            paper_type = paper.paper_type.paper_type_name
             if paper.id in reviewed_papers:
-                paper_type = paper.paper_type.paper_type_name
                 star_rating = _get_star_rating(paper, logged_in_user)
                 my_review_task_dict[paper_type].append(
                     (paper, True, range(star_rating)))
